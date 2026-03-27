@@ -1,0 +1,46 @@
+{
+  "name": "@d-form/element-plus",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build && tsc --build",
+    "type-check": "vue-tsc --noEmit",
+    "test": "vitest run",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "@d-form/core": "workspace:*",
+    "@d-form/shared": "workspace:*",
+    "@d-form/vue": "workspace:*",
+    "element-plus": "^2.9.1",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/test-utils": "^2.4.6",
+    "jsdom": "^29.0.1"
+  },
+  "peerDependencies": {
+    "element-plus": "^2.8.0",
+    "vue": "^3.4.0"
+  }
+}
