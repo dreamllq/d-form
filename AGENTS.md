@@ -15,7 +15,7 @@ d-form/
 ├── packages/
 │   ├── shared/         # @d-form/shared — types, utils, i18n (zero deps)
 │   ├── core/           # @d-form/core — form engine, reactive, validation, expressions
-│   ├── vue/            # @d-form/vue — Vue 3 composables, components, renderer
+│   ├── vue/            # @d-form/vue — Vue 3 composables, components, DFormItem, DFormItems, renderer
 │   └── element-plus/   # @d-form/element-plus — Element Plus UI adapters
 ├── apps/demo/          # Demo app (Vue 3 + Element Plus + vue-router)
 ├── docs/               # architecture.md, api.md, schema-spec.md, getting-started.md
@@ -36,7 +36,8 @@ d-form/
 | Add expression syntax       | `packages/core/src/expression/`                     | Compiler, `{{expr}}` DSL                    |
 | Add validation rule         | `packages/core/src/validation.ts`                   | Built-in rules + zod integration            |
 | Add Vue composable          | `packages/vue/src/composables/`                     | useForm, useField                           |
-| Add Vue component           | `packages/vue/src/components/`                      | DForm, DField                               |
+| Add Vue component           | `packages/vue/src/components/`                      | DForm, DField, DFormItem, DFormItems        |
+| Add form item layout        | `packages/vue/src/components/`                      | DFormItem, DFormItems                       |
 | Register renderer component | `packages/vue/src/renderer/`                        | Global registry, createRenderer             |
 | Add Element Plus adapter    | `packages/element-plus/src/adapters/`               | InputAdapter, SelectAdapter, etc.           |
 | Fix a build issue           | Each package has `vite.config.ts` + `tsconfig.json` |                                             |

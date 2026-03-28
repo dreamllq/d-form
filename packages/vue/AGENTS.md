@@ -7,21 +7,24 @@ Vue 3 integration layer. Depends on `@d-form/core` + `@d-form/shared`. ~570 line
 ```
 src/
 ├── composables/   # useForm (209), useField (115) — Vue↔core bridge
-├── components/    # DForm.vue (62), DField.vue (59) — provide/inject + rendering
+├── components/    # DForm.vue (62), DField.vue (59), DFormItem.vue (104), DFormItems.vue (30) — provide/inject + rendering
 ├── renderer/      # index.ts (70), types.ts (50) — component registry + renderField()
 └── index.ts       # Barrel: re-exports core + all modules
 ```
 
 ## WHERE TO LOOK
 
-| Task                   | File                      | Notes                                     |
-| ---------------------- | ------------------------- | ----------------------------------------- |
-| Add composable         | `composables/`            | Follow useForm/useField patterns          |
-| Add form feature       | `composables/useForm.ts`  | Wraps core Form, syncs Vue refs           |
-| Add field binding      | `composables/useField.ts` | Subscribes to Field events, updates refs  |
-| Modify form component  | `components/DForm.vue`    | provide/inject provider, wraps useForm    |
-| Modify field component | `components/DField.vue`   | Dynamic component resolution via registry |
-| Add renderer feature   | `renderer/index.ts`       | Global Map registry + createFormContext() |
+| Task                       | File                        | Notes                                                   |
+| -------------------------- | --------------------------- | ------------------------------------------------------- |
+| Add composable             | `composables/`              | Follow useForm/useField patterns                        |
+| Add form feature           | `composables/useForm.ts`    | Wraps core Form, syncs Vue refs                         |
+| Add field binding          | `composables/useField.ts`   | Subscribes to Field events, updates refs                |
+| Modify form component      | `components/DForm.vue`      | provide/inject provider, wraps useForm                  |
+| Modify field component     | `components/DField.vue`     | Dynamic component resolution via registry               |
+| Modify form item component | `components/DFormItem.vue`  | Label, error, required, description rendering           |
+| Auto-render form fields    | `components/DFormItems.vue` | Iterates schema.properties, renders DFormItem per field |
+| Add form item layout       | `components/`               | DFormItem, DFormItems                                   |
+| Add renderer feature       | `renderer/index.ts`         | Global Map registry + createFormContext()               |
 
 ## KEY PATTERNS
 
@@ -36,6 +39,9 @@ src/
 - Key: `'d-form'` (string literal, no InjectionKey — typed as `any` in DField)
 - DForm provides: useForm return + DFormContext (registry methods)
 - DField injects and accesses `form` property + `getComponent()`
+- DForm now provides `schema` and `uiSchema` in context alongside form methods and registry
+- DFormItem consumes `uiSchema` for layout (labelWidth, labelPosition, colon, showRequiredAsterisk)
+- DFormItems reads `schema` from injected context and auto-renders DFormItem for each property
 
 **Component registry:**
 

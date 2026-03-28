@@ -18,7 +18,9 @@
       }
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "vite build && tsc --build",
     "type-check": "vue-tsc --noEmit",
@@ -31,7 +33,11 @@
     "vue": "^3.5.13"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.2.1"
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/test-utils": "^2.4.0",
+    "vitest": "^2.1.8",
+    "jsdom": "^25.0.0",
+    "@vue/compiler-sfc": "^3.5.13"
   },
   "peerDependencies": {
     "vue": "^3.4.0"

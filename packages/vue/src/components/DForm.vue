@@ -13,14 +13,16 @@ const props = defineProps<{
 const form = useForm({
   schema: props.schema,
   initialValues: props.initialValues,
-  onSubmit: props.onSubmit
+  onSubmit: props.onSubmit,
 })
 
 const formContext = createFormContext()
 
 provide('d-form', {
   ...form,
-  ...formContext
+  ...formContext,
+  schema: props.schema,
+  uiSchema: props.schema?.uiSchema,
 })
 
 const handleSubmit = async () => {
@@ -51,7 +53,7 @@ defineExpose({
   getErrors: form.getErrors,
   getComponent: formContext.getComponent,
   hasComponent: formContext.hasComponent,
-  registerComponent: formContext.registerComponent
+  registerComponent: formContext.registerComponent,
 })
 </script>
 

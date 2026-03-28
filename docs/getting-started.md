@@ -136,11 +136,11 @@ const { values, errors, setFieldValue, submit, reset, isValid } = useForm({
 
 ### Option B: Component API
 
-Use `<DForm>` and `<DField>` for schema-driven rendering:
+Use `<DForm>` with `<DFormItem>` for automatic label, error, and description rendering:
 
 ```vue
 <script setup lang="ts">
-import { DForm, DField } from '@d-form/vue'
+import { DForm, DFormItem, DFormItems } from '@d-form/vue'
 
 const schema = {
   type: 'object' as const,
@@ -165,14 +165,25 @@ const handleSubmit = async (values: any) => {
 </script>
 
 <template>
+  <!-- Manual layout with DFormItem for each field -->
   <DForm :schema="schema" :on-submit="handleSubmit">
-    <DField name="name" :schema="schema.properties.name" />
-    <DField name="email" :schema="schema.properties.email" />
-    <DField name="role" :schema="schema.properties.role" />
+    <DFormItem name="name" :schema="schema.properties.name" />
+    <DFormItem name="email" :schema="schema.properties.email" />
+    <DFormItem name="role" :schema="schema.properties.role" />
+    <button type="submit">Submit</button>
+  </DForm>
+
+  <!-- Auto-rendering with DFormItems -->
+  <DForm :schema="schema" :on-submit="handleSubmit">
+    <DFormItems />
     <button type="submit">Submit</button>
   </DForm>
 </template>
 ```
+
+**DFormItem** reads `schema.title` for the label, shows a required asterisk when `schema.required` is true, displays error messages when the field is touched and has an error, and renders `schema.description` as help text.
+
+**DFormItems** automatically iterates all properties in the schema and renders a `<DFormItem>` for each one (skipping `type: 'void'` fields).
 
 ## Adding Validation
 

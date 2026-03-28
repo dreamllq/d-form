@@ -1,2 +1,4 @@
 export { default as DForm } from './DForm.vue'
 export { default as DField } from './DField.vue'
+export { default as DFormItem } from './DFormItem.vue'
+export { default as DFormItems } from './DFormItems.vue'

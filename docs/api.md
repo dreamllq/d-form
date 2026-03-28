@@ -617,6 +617,58 @@ Renders a single form field using the component registry.
 
 **Exposes:** `validate()`, `value`, `error`, `touched`
 
+#### `<DFormItem>`
+
+Wraps a form field with label, required markerisk, error message, and description.
+
+**Props:**
+
+| Prop        | Type                  | Description                                                  |
+| ----------- | --------------------- | ------------------------------------------------------------ |
+| `name`      | `string`              | Field path (required)                                        |
+| `schema`    | `FieldSchema`         | Field schema. Falls back to injected context if not provided |
+| `label`     | `string`              | Override `schema.title` for the label text                   |
+| `required`  | `boolean`             | Override `schema.required` for required asterisk             |
+| `component` | `string \| Component` | Override the rendering component                             |
+| `disabled`  | `boolean`             | Disable the field                                            |
+
+**Slots:**
+
+| Slot      | Description                                  |
+| --------- | -------------------------------------------- |
+| `default` | Custom field content. Defaults to `<DField>` |
+
+**Exposes:**
+
+| Name       | Type           | Description           |
+| ---------- | -------------- | --------------------- |
+| `validate` | `Function`     | Validate the field    |
+| `error`    | `Ref<string>`  | Current error message |
+| `touched`  | `Ref<boolean>` | Current touched state |
+
+**CSS Classes:**
+
+| Class                       | Description                                      |
+| --------------------------- | ------------------------------------------------ |
+| `.d-form-item`              | Container div                                    |
+| `.d-form-item--label-left`  | Horizontal layout (label + control side by side) |
+| `.d-form-item--label-top`   | Vertical layout (label above control)            |
+| `.d-form-item__label`       | Label element                                    |
+| `.d-form-item__required`    | Required asterisk (`*`) in red                   |
+| `.d-form-item__control`     | Control wrapper div                              |
+| `.d-form-item__error`       | Error message (red, shown when touched + error)  |
+| `.d-form-item__description` | Description/help text (gray)                     |
+
+#### `<DFormItems>`
+
+Auto-renders component that iterates `schema.properties` and renders a `<DFormItem>` for each non-void field.
+
+**Props:** None (reads schema from injected context).
+
+**Slots:** None (renders `<DFormItem>` for each property).
+
+**Exposes:** None.
+
 ### Renderer
 
 #### `registerComponent(name, component)`

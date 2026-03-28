@@ -67,10 +67,32 @@ The Vue 3 integration layer. Depends on `@d-form/core` and `@d-form/shared`. It 
 
 - `<DForm>` creates a form context via `useForm`, provides it through Vue's `provide/inject`, and renders a `<form>` element with a default slot.
 - `<DField>` connects to the injected form context, resolves the rendering component from the registry, and renders it with `v-model` binding.
+- **`<DFormItem>`** Wraps a single form field with label, required asterisk, error message, and description. Reads field schema from the injected context and renders a `<DField>` in its default slot.
+- **`<DFormItems>`** Auto-renders component that iterates `schema.properties` and renders a `<DFormItem>` for each non-void field.
 
 **Renderer:**
 
 A global component registry (`Map<string, Component>`) maps string names to Vue components. `createRenderer()` returns an `IRenderer` that resolves a `FieldSchema.component` string to a registered component and renders it via `h()`. `createFormContext()` adds a local registry layer for per-form component overrides.
+
+### Component Hierarchy
+
+The component hierarchy forms two rendering paths:
+
+**Manual layout:**
+
+```
+DForm → DFormItem → DField → Adapter
+```
+
+**Auto-rendering:**
+
+```
+DForm → DFormItems → DFormItem → DField → Adapter
+```
+
+In manual layout, users compose `DFormItem` in the `DForm` slot for each field. In auto-rendering, `<DFormItems />` replaces individual `DFormItem` components with automatic iteration.
+
+> **Note**: `DFormItem` consumes `UISchema` properties (`labelWidth`, `labelPosition`, `colon`, `showRequiredAsterisk`) from the provided context to configure label display.
 
 ### @d-form/element-plus
 
