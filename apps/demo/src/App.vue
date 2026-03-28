@@ -10,6 +10,7 @@
           <router-link to="/validation" class="nav-link">Validation</router-link>
           <router-link to="/linkage" class="nav-link">Linkage</router-link>
           <router-link to="/schema-editor" class="nav-link">Schema Editor</router-link>
+          <router-link to="/form-layout" class="nav-link">Form Layout</router-link>
         </nav>
       </aside>
       <main class="app-main">

@@ -26,22 +26,22 @@ d-form/
 
 ## WHERE TO LOOK
 
-| Task                        | Location                                            | Notes                                       |
-| --------------------------- | --------------------------------------------------- | ------------------------------------------- |
-| Add a new type/interface    | `packages/shared/src/types/`                        | All shared types live here                  |
-| Add a utility function      | `packages/shared/src/utils/`                        | Deep path access, clone, merge, type guards |
-| Add i18n locale/translation | `packages/shared/src/i18n/`                         | `createI18n()`, en + zh-CN                  |
-| Add form/field logic        | `packages/core/src/models/`                         | Form, Field, Reaction classes               |
-| Add reactive system feature | `packages/core/src/reactive/`                       | Custom observable/autorun/Tracker           |
-| Add expression syntax       | `packages/core/src/expression/`                     | Compiler, `{{expr}}` DSL                    |
-| Add validation rule         | `packages/core/src/validation.ts`                   | Built-in rules + zod integration            |
-| Add Vue composable          | `packages/vue/src/composables/`                     | useForm, useField                           |
-| Add Vue component           | `packages/vue/src/components/`                      | DForm, DField, DFormItem, DFormItems        |
-| Add form item layout        | `packages/vue/src/components/`                      | DFormItem, DFormItems                       |
-| Register renderer component | `packages/vue/src/renderer/`                        | Global registry, createRenderer             |
-| Add Element Plus adapter    | `packages/element-plus/src/adapters/`               | InputAdapter, SelectAdapter, etc.           |
-| Fix a build issue           | Each package has `vite.config.ts` + `tsconfig.json` |                                             |
-| Run the demo                | `apps/demo/`                                        | `pnpm --filter @d-form/demo dev`            |
+| Task                        | Location                                            | Notes                                                                                                                                                          |
+| --------------------------- | --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Add a new type/interface    | `packages/shared/src/types/`                        | All shared types live here. `FieldSchema` now includes `labelPosition` and `labelWidth`                                                                        |
+| Add a utility function      | `packages/shared/src/utils/`                        | Deep path access, clone, merge, type guards                                                                                                                    |
+| Add i18n locale/translation | `packages/shared/src/i18n/`                         | `createI18n()`, en + zh-CN                                                                                                                                     |
+| Add form/field logic        | `packages/core/src/models/`                         | Form, Field, Reaction classes                                                                                                                                  |
+| Add reactive system feature | `packages/core/src/reactive/`                       | Custom observable/autorun/Tracker                                                                                                                              |
+| Add expression syntax       | `packages/core/src/expression/`                     | Compiler, `{{expr}}` DSL                                                                                                                                       |
+| Add validation rule         | `packages/core/src/validation.ts`                   | Built-in rules + zod integration                                                                                                                               |
+| Add Vue composable          | `packages/vue/src/composables/`                     | useForm, useField                                                                                                                                              |
+| Add Vue component           | `packages/vue/src/components/`                      | DForm, DField, DFormItem, DFormItems                                                                                                                           |
+| Add form item layout        | `packages/vue/src/components/`                      | DFormItem, DFormItems. DFormItem supports per-item `labelPosition`, `labelWidth` overrides via props. `prop` is a passthrough for future validate/resetFields. |
+| Register renderer component | `packages/vue/src/renderer/`                        | Global registry, createRenderer                                                                                                                                |
+| Add Element Plus adapter    | `packages/element-plus/src/adapters/`               | InputAdapter, SelectAdapter, etc.                                                                                                                              |
+| Fix a build issue           | Each package has `vite.config.ts` + `tsconfig.json` |                                                                                                                                                                |
+| Run the demo                | `apps/demo/`                                        | `pnpm --filter @d-form/demo dev`                                                                                                                               |
 
 ## CONVENTIONS
 
@@ -97,3 +97,4 @@ pnpm format:check   # Prettier check
 - `@d-form/shared` has secondary entry point `./types` for type-only imports
 - Vue packages use `vue-tsc` for type-checking (not plain `tsc`)
 - Element Plus tests run in `jsdom` environment; core/shared use Node
+- `prop` is a DFormItem-only prop, not in FieldSchema. It's reserved for future validate/resetFields use

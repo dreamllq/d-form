@@ -39,6 +39,26 @@ function mountWithDFormItem(
   return wrapper
 }
 
+function mountWithDFormProps(
+  name: string,
+  fieldSchema: FieldSchema,
+  dFormProps?: Record<string, any>,
+  formItemProps?: Record<string, any>
+) {
+  const schema: FormSchema = {
+    type: 'object',
+    properties: { [name]: fieldSchema },
+    ...(dFormProps?.uiSchema ? { uiSchema: dFormProps.uiSchema } : {}),
+  }
+  const { uiSchema: _uiSchema, ...restFormProps } = dFormProps || {}
+  return mount(DForm, {
+    props: { schema, ...restFormProps },
+    slots: {
+      default: () => h(DFormItem, { name, schema: fieldSchema, ...formItemProps }),
+    },
+  })
+}
+
 describe('DFormItem label rendering', () => {
   it('renders label text from schema.title', () => {
     const wrapper = mountWithDFormItem('email', {
@@ -294,15 +314,15 @@ describe('DFormItem UISchema layout', () => {
     expect(item.classes()).not.toContain('d-form-item--label-left')
   })
 
-  it('default layout uses d-form-item--label-left class', () => {
+  it('default layout uses d-form-item--label-right class', () => {
     const wrapper = mountWithDFormItem('name', {
       type: 'string',
       title: 'Name',
     })
 
     const item = wrapper.find('.d-form-item')
-    expect(item.classes()).toContain('d-form-item--label-left')
-    expect(item.classes()).not.toContain('d-form-item--label-top')
+    expect(item.classes()).toContain('d-form-item--label-right')
+    expect(item.classes()).not.toContain('d-form-item--label-left')
   })
 
   it('shows colon after label when uiSchema.colon is true', () => {
@@ -330,7 +350,7 @@ describe('DFormItem UISchema layout', () => {
     expect(label.text()).toContain('Name')
   })
 
-  it('default without uiSchema renders correctly with label-left', () => {
+  it('default without uiSchema renders correctly with label-right', () => {
     const wrapper = mountWithDFormItem('name', {
       type: 'string',
       title: 'Name',
@@ -338,7 +358,7 @@ describe('DFormItem UISchema layout', () => {
 
     const item = wrapper.find('.d-form-item')
     expect(item.classes()).toContain('d-form-item')
-    expect(item.classes()).toContain('d-form-item--label-left')
+    expect(item.classes()).toContain('d-form-item--label-right')
 
     const label = wrapper.find('.d-form-item__label')
     expect(label.exists()).toBe(true)
@@ -355,5 +375,95 @@ describe('DFormItem UISchema layout', () => {
     expect(control.exists()).toBe(true)
     const input = control.find('input')
     expect(input.exists()).toBe(true)
+  })
+})
+
+describe('DFormItem label priority chain', () => {
+  it('DFormItem prop overrides all other sources', () => {
+    const wrapper = mountWithDFormProps(
+      'name',
+      { type: 'string', title: 'Name', labelPosition: 'left' },
+      { labelPosition: 'right', uiSchema: { labelPosition: 'left' } },
+      { labelPosition: 'top' }
+    )
+    const item = wrapper.find('.d-form-item')
+    expect(item.classes()).toContain('d-form-item--label-top')
+  })
+
+  it('FieldSchema overrides DForm prop and uiSchema', () => {
+    const wrapper = mountWithDFormProps(
+      'name',
+      { type: 'string', title: 'Name', labelPosition: 'top' },
+      { labelPosition: 'left' }
+    )
+    const item = wrapper.find('.d-form-item')
+    expect(item.classes()).toContain('d-form-item--label-top')
+  })
+
+  it('DForm prop overrides uiSchema', () => {
+    const wrapper = mountWithDFormProps(
+      'name',
+      { type: 'string', title: 'Name' },
+      { labelPosition: 'left', uiSchema: { labelPosition: 'top' } }
+    )
+    const item = wrapper.find('.d-form-item')
+    expect(item.classes()).toContain('d-form-item--label-left')
+  })
+
+  it('uiSchema when no DForm prop', () => {
+    const wrapper = mountWithDFormProps(
+      'name',
+      { type: 'string', title: 'Name' },
+      { uiSchema: { labelPosition: 'top' } }
+    )
+    const item = wrapper.find('.d-form-item')
+    expect(item.classes()).toContain('d-form-item--label-top')
+  })
+
+  it('defaults to right when nothing is specified', () => {
+    const wrapper = mountWithDFormProps('name', { type: 'string', title: 'Name' })
+    const item = wrapper.find('.d-form-item')
+    expect(item.classes()).toContain('d-form-item--label-right')
+  })
+
+  it('labelWidth as number converts to px', () => {
+    const wrapper = mountWithDFormProps(
+      'name',
+      { type: 'string', title: 'Name' },
+      { labelWidth: 200 }
+    )
+    const label = wrapper.find('.d-form-item__label')
+    expect(label.attributes('style')).toContain('width: 200px')
+  })
+
+  it('labelWidth as string used directly', () => {
+    const wrapper = mountWithDFormProps(
+      'name',
+      { type: 'string', title: 'Name' },
+      { labelWidth: '10em' }
+    )
+    const label = wrapper.find('.d-form-item__label')
+    expect(label.attributes('style')).toContain('width: 10em')
+  })
+
+  it('labelWidth FieldSchema overrides DForm prop', () => {
+    const wrapper = mountWithDFormProps(
+      'name',
+      { type: 'string', title: 'Name', labelWidth: '150px' },
+      { labelWidth: 200 }
+    )
+    const label = wrapper.find('.d-form-item__label')
+    expect(label.attributes('style')).toContain('width: 150px')
+  })
+
+  it('labelWidth DFormItem prop overrides all', () => {
+    const wrapper = mountWithDFormProps(
+      'name',
+      { type: 'string', title: 'Name', labelWidth: '150px' },
+      { labelWidth: 200 },
+      { labelWidth: 'auto' }
+    )
+    const label = wrapper.find('.d-form-item__label')
+    expect(label.attributes('style')).toContain('width: auto')
   })
 })

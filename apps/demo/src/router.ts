@@ -3,6 +3,7 @@ import BasicFieldsPage from './pages/BasicFieldsPage.vue'
 import ValidationPage from './pages/ValidationPage.vue'
 import LinkagePage from './pages/LinkagePage.vue'
 import SchemaEditorPage from './pages/SchemaEditorPage.vue'
+import FormLayoutPage from './pages/FormLayoutPage.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -12,6 +13,7 @@ const router = createRouter({
     { path: '/validation', component: ValidationPage },
     { path: '/linkage', component: LinkagePage },
     { path: '/schema-editor', component: SchemaEditorPage },
+    { path: '/form-layout', component: FormLayoutPage },
   ],
 })
 

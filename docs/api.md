@@ -59,6 +59,8 @@ interface FieldSchema<T = any> {
   visible?: boolean // Initial visibility
   disabled?: boolean // Initial disabled state
   placeholder?: string // Input placeholder
+  labelPosition?: 'left' | 'right' | 'top' // Per-field label position override
+  labelWidth?: string | number // Per-field label width (e.g. '100px' or 100)
   required?: boolean // Show required marker
   enum?: Array<{ label: string; value: any }> | any[] // Select/radio options
   properties?: Record<string, FieldSchema> // Nested fields (object type)
@@ -594,11 +596,13 @@ Root form component. Creates form context and provides it to children.
 
 **Props:**
 
-| Prop            | Type                                     | Description            |
-| --------------- | ---------------------------------------- | ---------------------- |
-| `schema`        | `FormSchema`                             | Form schema definition |
-| `initialValues` | `Record<string, any>`                    | Starting values        |
-| `onSubmit`      | `(values: any) => Promise<void> \| void` | Submit handler         |
+| Prop            | Type                                     | Description                      |
+| --------------- | ---------------------------------------- | -------------------------------- |
+| `schema`        | `FormSchema`                             | Form schema definition           |
+| `initialValues` | `Record<string, any>`                    | Starting values                  |
+| `onSubmit`      | `(values: any) => Promise<void> \| void` | Submit handler                   |
+| `labelPosition` | `'left' \| 'right' \| 'top'`             | Default label position for items |
+| `labelWidth`    | `string \| number`                       | Default label width for items    |
 
 **Exposes:** All `useForm` return properties and methods, plus `getComponent`, `hasComponent`, `registerComponent` from the form context.
 
@@ -623,14 +627,17 @@ Wraps a form field with label, required markerisk, error message, and descriptio
 
 **Props:**
 
-| Prop        | Type                  | Description                                                  |
-| ----------- | --------------------- | ------------------------------------------------------------ |
-| `name`      | `string`              | Field path (required)                                        |
-| `schema`    | `FieldSchema`         | Field schema. Falls back to injected context if not provided |
-| `label`     | `string`              | Override `schema.title` for the label text                   |
-| `required`  | `boolean`             | Override `schema.required` for required asterisk             |
-| `component` | `string \| Component` | Override the rendering component                             |
-| `disabled`  | `boolean`             | Disable the field                                            |
+| Prop            | Type                         | Description                                                  |
+| --------------- | ---------------------------- | ------------------------------------------------------------ |
+| `name`          | `string`                     | Field path (required)                                        |
+| `schema`        | `FieldSchema`                | Field schema. Falls back to injected context if not provided |
+| `label`         | `string`                     | Override `schema.title` for the label text                   |
+| `required`      | `boolean`                    | Override `schema.required` for required asterisk             |
+| `component`     | `string \| Component`        | Override the rendering component                             |
+| `disabled`      | `boolean`                    | Disable the field                                            |
+| `labelPosition` | `'left' \| 'right' \| 'top'` | Override label position (highest priority)                   |
+| `labelWidth`    | `string \| number`           | Override label width (highest priority)                      |
+| `prop`          | `string \| string[]`         | Reserved for future validate/resetFields use                 |
 
 **Slots:**
 
@@ -652,6 +659,7 @@ Wraps a form field with label, required markerisk, error message, and descriptio
 | --------------------------- | ------------------------------------------------ |
 | `.d-form-item`              | Container div                                    |
 | `.d-form-item--label-left`  | Horizontal layout (label + control side by side) |
+| `.d-form-item--label-right` | Horizontal layout with right-aligned label       |
 | `.d-form-item--label-top`   | Vertical layout (label above control)            |
 | `.d-form-item__label`       | Label element                                    |
 | `.d-form-item__required`    | Required asterisk (`*`) in red                   |

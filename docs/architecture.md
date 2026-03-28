@@ -92,7 +92,7 @@ DForm → DFormItems → DFormItem → DField → Adapter
 
 In manual layout, users compose `DFormItem` in the `DForm` slot for each field. In auto-rendering, `<DFormItems />` replaces individual `DFormItem` components with automatic iteration.
 
-> **Note**: `DFormItem` consumes `UISchema` properties (`labelWidth`, `labelPosition`, `colon`, `showRequiredAsterisk`) from the provided context to configure label display.
+> **Note**: `DFormItem` consumes `UISchema` properties (`labelWidth`, `labelPosition`, `colon`, `showRequiredAsterisk`) from the provided context to configure label display. It also accepts `labelPosition` and `labelWidth` as component props (via `DForm` provide) with a priority chain: **DFormItem prop > FieldSchema > DForm prop > uiSchema > default 'right'**. `FieldSchema` now includes `labelPosition` and `labelWidth` fields for per-field overrides. `prop` in `DFormItem` is reserved for future `validate`/`resetFields` use.
 
 ### @d-form/element-plus
 

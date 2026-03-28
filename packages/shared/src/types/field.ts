@@ -5,14 +5,7 @@
 import type { ValidationConfig } from './validation'
 import type { ReactionConfig } from './reaction'
 
-export type FieldType = 
-  | 'string'
-  | 'number'
-  | 'boolean'
-  | 'object'
-  | 'array'
-  | 'date'
-  | 'void'
+export type FieldType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'date' | 'void'
 
 export interface FieldSchema<T = any> {
   /** Field type */
@@ -39,6 +32,10 @@ export interface FieldSchema<T = any> {
   disabled?: boolean
   /** Field placeholder */
   placeholder?: string
+  /** Label position override for this field */
+  labelPosition?: 'left' | 'right' | 'top'
+  /** Label width override for this field (e.g. '100px', 100) */
+  labelWidth?: string | number
   /** Field required marker */
   required?: boolean
   /** Custom enum values */

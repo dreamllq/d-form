@@ -11,6 +11,9 @@ const props = defineProps<{
   required?: boolean
   component?: string | Component
   disabled?: boolean
+  labelPosition?: 'left' | 'right' | 'top'
+  labelWidth?: string | number
+  prop?: string | string[]
 }>()
 
 const formContext = inject<any>('d-form')
@@ -29,21 +32,34 @@ const showError = computed(() => !!error.value)
 
 const displayDescription = computed(() => props.schema?.description)
 
-const labelPosition = computed(() => uiSchema?.labelPosition ?? 'left')
+const labelPosition = computed(() => {
+  return (
+    props.labelPosition ??
+    props.schema?.labelPosition ??
+    formContext?.labelPosition ??
+    uiSchema?.labelPosition ??
+    'right'
+  )
+})
 const showColon = computed(() => uiSchema?.colon ?? false)
 const labelStyle = computed(() => {
-  const w = uiSchema?.labelWidth
+  const w =
+    props.labelWidth ?? props.schema?.labelWidth ?? formContext?.labelWidth ?? uiSchema?.labelWidth
   if (w !== undefined && w !== null) {
     return { width: typeof w === 'number' ? `${w}px` : w }
   }
   return {}
 })
 
-const itemClasses = computed(() => ({
-  'd-form-item': true,
-  'd-form-item--label-top': labelPosition.value === 'top',
-  'd-form-item--label-left': labelPosition.value === 'left' || !labelPosition.value,
-}))
+const itemClasses = computed(() => {
+  const pos = labelPosition.value
+  return {
+    'd-form-item': true,
+    'd-form-item--label-top': pos === 'top',
+    'd-form-item--label-left': pos === 'left',
+    'd-form-item--label-right': pos === 'right',
+  }
+})
 </script>
 
 <template>
@@ -86,6 +102,15 @@ const itemClasses = computed(() => ({
 
 .d-form-item--label-left .d-form-item__label {
   margin-right: 8px;
+}
+
+.d-form-item--label-right {
+  display: flex;
+  align-items: flex-start;
+}
+
+.d-form-item--label-right .d-form-item__label {
+  text-align: right;
 }
 
 .d-form-item__required {

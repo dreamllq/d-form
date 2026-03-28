@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { provide, reactive } from 'vue'
-import { useForm, type UseFormReturn } from '../composables/useForm'
-import { createFormContext, type DFormContext } from '../renderer'
+import { provide, reactive, computed } from 'vue'
+import { useForm } from '../composables/useForm'
+import { createFormContext } from '../renderer'
 import type { FormSchema } from '@d-form/shared'
 
 const props = defineProps<{
   schema?: FormSchema
   initialValues?: Record<string, any>
   onSubmit?: (values: any) => Promise<void> | void
+  labelPosition?: 'left' | 'right' | 'top'
+  labelWidth?: string | number
 }>()
 
 const form = useForm({
@@ -18,11 +20,17 @@ const form = useForm({
 
 const formContext = createFormContext()
 
+const context = reactive({
+  schema: computed(() => props.schema),
+  uiSchema: computed(() => props.schema?.uiSchema),
+  labelPosition: computed(() => props.labelPosition),
+  labelWidth: computed(() => props.labelWidth),
+})
+
 provide('d-form', {
   ...form,
   ...formContext,
-  schema: props.schema,
-  uiSchema: props.schema?.uiSchema,
+  ...context,
 })
 
 const handleSubmit = async () => {

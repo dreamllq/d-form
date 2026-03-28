@@ -98,6 +98,10 @@ interface FieldSchema {
   visible?: boolean
   disabled?: boolean
   placeholder?: string
+  /** Label position override for this field */
+  labelPosition?: 'left' | 'right' | 'top'
+  /** Label width override for this field (e.g. '100px', 100) */
+  labelWidth?: string | number
   required?: boolean
   enum?: Array<{ label: string; value: any }> | any[]
   properties?: Record<string, FieldSchema>
@@ -184,6 +188,46 @@ Shortcut for the placeholder text. Some adapters read this from the schema direc
   type: 'string',
   component: 'input',
   placeholder: 'Enter your email'
+}
+```
+
+### `labelPosition`
+
+Per-field label alignment override.
+
+- **Type**: `'left' | 'right' | 'top'`
+- **Default**: inherits from form level (defaults to `'right'`)
+
+**Priority chain**: DFormItem prop > FieldSchema > DForm prop > uiSchema > `'right'`
+
+Example:
+
+```ts
+{
+  type: 'string',
+  title: 'Email',
+  labelPosition: 'top'
+}
+```
+
+### `labelWidth`
+
+Per-field label width override.
+
+- **Type**: `string | number`
+- **Default**: inherits from form level
+
+When a number is provided, it is automatically converted to pixels (e.g. `100` becomes `'100px'`).
+
+**Priority chain**: DFormItem prop > FieldSchema > DForm prop > uiSchema
+
+Example:
+
+```ts
+{
+  type: 'string',
+  title: 'Email',
+  labelWidth: '200px'
 }
 ```
 
