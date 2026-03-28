@@ -16,7 +16,7 @@ const props = defineProps<{
 const formContext = inject<any>('d-form')
 const uiSchema = formContext?.uiSchema
 
-const { error, touched } = useField(props.name, formContext?.form, {
+const { error } = useField(props.name, formContext?.form, {
   schema: props.schema,
 })
 
@@ -25,7 +25,7 @@ const displayLabel = computed(() => props.label ?? props.schema?.title)
 const isRequired = computed(() => props.required || props.schema?.required || false)
 const showRequiredAsterisk = computed(() => uiSchema?.showRequiredAsterisk !== false)
 
-const showError = computed(() => !!(error.value && touched.value))
+const showError = computed(() => !!error.value)
 
 const displayDescription = computed(() => props.schema?.description)
 

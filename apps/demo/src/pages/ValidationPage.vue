@@ -40,8 +40,8 @@ const schema: FormSchema = {
       placeholder: 'Enter username',
       validation: {
         rules: [
-          { type: 'required', message: 'Username is required' },
-          { type: 'minLength', value: 3, message: 'Username must be at least 3 characters' },
+          { type: 'required', message: 'Username is required', trigger:'blur'},
+          { type: 'minLength', value: 3, message: 'Username must be at least 3 characters', trigger:'blur' },
         ],
       },
     },
@@ -52,8 +52,8 @@ const schema: FormSchema = {
       placeholder: 'Enter email',
       validation: {
         rules: [
-          { type: 'required', message: 'Email is required' },
-          { type: 'pattern', value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Invalid email format' },
+          { type: 'required', message: 'Email is required', trigger:'change' },
+          { type: 'pattern', value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Invalid email format', trigger:'change' },
         ],
       },
     },

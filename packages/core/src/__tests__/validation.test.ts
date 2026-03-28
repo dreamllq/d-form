@@ -531,7 +531,7 @@ describe('Validation', () => {
       expect(field.getError()).toBeUndefined()
     })
 
-    it('should auto-validate on blur by default (rules without trigger)', () => {
+    it('should auto-validate on change by default (rules without trigger)', () => {
       const form = createForm()
       const field = form.registerField('name', {
         type: 'string',
@@ -541,7 +541,7 @@ describe('Validation', () => {
       })
 
       expect(field.getError()).toBeUndefined()
-      field.setTouched(true)
+      field.setValue('')
       expect(field.getError()).toBe('name is required')
     })
 

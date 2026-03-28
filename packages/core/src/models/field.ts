@@ -8,18 +8,23 @@ import type {
 } from '@d-form/shared'
 import { validateFieldAsync, validateFieldSync } from '../validation'
 
-function matchesTrigger(rule: ValidationRule, trigger: ValidationTrigger): boolean {
-  if (!rule.trigger) return true
+function matchesTrigger(
+  rule: ValidationRule,
+  trigger: ValidationTrigger,
+  hasFieldTrigger?: boolean
+): boolean {
+  if (!rule.trigger) return hasFieldTrigger ? true : trigger === 'change'
   if (Array.isArray(rule.trigger)) return rule.trigger.includes(trigger)
   return rule.trigger === trigger
 }
 
 function filterRulesByTrigger(
   rules: ValidationRule[],
-  trigger?: ValidationTrigger
+  trigger?: ValidationTrigger,
+  hasFieldTrigger?: boolean
 ): ValidationRule[] {
   if (!trigger) return rules
-  return rules.filter((rule) => matchesTrigger(rule, trigger))
+  return rules.filter((rule) => matchesTrigger(rule, trigger, hasFieldTrigger))
 }
 
 type Form = import('./form').Form
@@ -102,16 +107,16 @@ export class Field {
   }
 
   setTouched(touched: boolean): void {
+    if (touched) {
+      this.validate('blur')
+    }
+
     const oldTouched = this._state.touched
     if (oldTouched === touched) return
 
     this._state.touched = touched
     this._emit('touchedChange', touched, oldTouched)
     this._emit('stateChange', this._state)
-
-    if (touched) {
-      this.validate('blur')
-    }
   }
 
   setVisible(visible: boolean): void {
@@ -146,7 +151,7 @@ export class Field {
       }
     }
 
-    const rules = filterRulesByTrigger(allRules, trigger)
+    const rules = filterRulesByTrigger(allRules, trigger, !!fieldTrigger)
 
     if (rules.length === 0) {
       return { valid: true, errors: [] }

@@ -191,7 +191,7 @@ describe('DFormItem error message display', () => {
     expect(errorDiv.text()).toContain('Required field')
   })
 
-  it('hides error when field has error but is NOT touched', async () => {
+  it('shows error when field has error even when NOT touched', async () => {
     const wrapper = mountWithDFormItem('email', {
       type: 'string',
       title: 'Email',
@@ -204,7 +204,7 @@ describe('DFormItem error message display', () => {
     await nextTick()
 
     const errorDiv = wrapper.find('.d-form-item__error')
-    expect(errorDiv.exists()).toBe(false)
+    expect(errorDiv.exists()).toBe(true)
   })
 
   it('hides error when field has no error', async () => {
