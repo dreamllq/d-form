@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { createForm, createReaction } from '@d-form/core'
-import type { FormSchema } from '@d-form/shared'
+import type { FormSchema } from '@d-form/core'
 import { hasComponent, clearComponents } from '@d-form/vue'
 import { registerElementPlusComponents } from '../index'
 
@@ -123,7 +123,7 @@ describe('Element Plus Integration Tests', () => {
 
       const result = await form.validate()
       expect(result.valid).toBe(false)
-      expect(result.fields.name.valid).toBe(false)
+      expect((result.fields as Record<string, any>).name.valid).toBe(false)
       expect(result.fields.name.errors).toContain('Name is required')
     })
 
