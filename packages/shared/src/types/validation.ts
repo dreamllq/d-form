@@ -2,6 +2,8 @@
  * Validation types for d-form
  */
 
+export type ValidationTrigger = 'blur' | 'change'
+
 export interface ValidationRule {
   /** Validation rule type */
   type: 'required' | 'min' | 'max' | 'minLength' | 'maxLength' | 'pattern' | 'custom'
@@ -11,6 +13,8 @@ export interface ValidationRule {
   message?: string
   /** Custom validator function for 'custom' type */
   validator?: (value: any) => boolean | Promise<boolean>
+  /** Undefined = matches all triggers (Element Plus convention) */
+  trigger?: ValidationTrigger | ValidationTrigger[]
 }
 
 export interface ValidationConfig {

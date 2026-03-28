@@ -9,9 +9,9 @@ describe('Validation', () => {
   describe('sync validation', () => {
     it('should validate required field - fail when empty', () => {
       const form = createForm()
-      const field = form.registerField('name', { 
+      const field = form.registerField('name', {
         type: 'string',
-        validation: { rules: [{ type: 'required' }] }
+        validation: { rules: [{ type: 'required' }] },
       })
       const result = field.validate()
       expect(result.valid).toBe(false)
@@ -20,9 +20,9 @@ describe('Validation', () => {
 
     it('should validate required field - pass when has value', () => {
       const form = createForm()
-      const field = form.registerField('name', { 
+      const field = form.registerField('name', {
         type: 'string',
-        validation: { rules: [{ type: 'required' }] }
+        validation: { rules: [{ type: 'required' }] },
       })
       field.setValue('valid')
       const result = field.validate()
@@ -32,9 +32,9 @@ describe('Validation', () => {
 
     it('should validate required field with zero value', () => {
       const form = createForm()
-      const field = form.registerField('count', { 
+      const field = form.registerField('count', {
         type: 'number',
-        validation: { rules: [{ type: 'required' }] }
+        validation: { rules: [{ type: 'required' }] },
       })
       field.setValue(0)
       const result = field.validate()
@@ -43,9 +43,9 @@ describe('Validation', () => {
 
     it('should validate required field with false value', () => {
       const form = createForm()
-      const field = form.registerField('agree', { 
+      const field = form.registerField('agree', {
         type: 'boolean',
-        validation: { rules: [{ type: 'required' }] }
+        validation: { rules: [{ type: 'required' }] },
       })
       field.setValue(false)
       const result = field.validate()
@@ -54,19 +54,19 @@ describe('Validation', () => {
 
     it('should validate min value', () => {
       const form = createForm()
-      const field = form.registerField('age', { 
+      const field = form.registerField('age', {
         type: 'number',
-        validation: { rules: [{ type: 'min', value: 18 }] }
+        validation: { rules: [{ type: 'min', value: 18 }] },
       })
-      
+
       field.setValue(10)
       let result = field.validate()
       expect(result.valid).toBe(false)
-      
+
       field.setValue(18)
       result = field.validate()
       expect(result.valid).toBe(true)
-      
+
       field.setValue(25)
       result = field.validate()
       expect(result.valid).toBe(true)
@@ -74,19 +74,19 @@ describe('Validation', () => {
 
     it('should validate max value', () => {
       const form = createForm()
-      const field = form.registerField('age', { 
+      const field = form.registerField('age', {
         type: 'number',
-        validation: { rules: [{ type: 'max', value: 100 }] }
+        validation: { rules: [{ type: 'max', value: 100 }] },
       })
-      
+
       field.setValue(150)
       let result = field.validate()
       expect(result.valid).toBe(false)
-      
+
       field.setValue(100)
       result = field.validate()
       expect(result.valid).toBe(true)
-      
+
       field.setValue(50)
       result = field.validate()
       expect(result.valid).toBe(true)
@@ -94,15 +94,15 @@ describe('Validation', () => {
 
     it('should validate min length', () => {
       const form = createForm()
-      const field = form.registerField('name', { 
+      const field = form.registerField('name', {
         type: 'string',
-        validation: { rules: [{ type: 'minLength', value: 3 }] }
+        validation: { rules: [{ type: 'minLength', value: 3 }] },
       })
-      
+
       field.setValue('ab')
       let result = field.validate()
       expect(result.valid).toBe(false)
-      
+
       field.setValue('abc')
       result = field.validate()
       expect(result.valid).toBe(true)
@@ -110,15 +110,15 @@ describe('Validation', () => {
 
     it('should validate max length', () => {
       const form = createForm()
-      const field = form.registerField('name', { 
+      const field = form.registerField('name', {
         type: 'string',
-        validation: { rules: [{ type: 'maxLength', value: 10 }] }
+        validation: { rules: [{ type: 'maxLength', value: 10 }] },
       })
-      
+
       field.setValue('this is too long')
       let result = field.validate()
       expect(result.valid).toBe(false)
-      
+
       field.setValue('short')
       result = field.validate()
       expect(result.valid).toBe(true)
@@ -126,20 +126,22 @@ describe('Validation', () => {
 
     it('should validate pattern with regex', () => {
       const form = createForm()
-      const field = form.registerField('email', { 
+      const field = form.registerField('email', {
         type: 'string',
-        validation: { 
-          rules: [{ 
-            type: 'pattern', 
-            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ 
-          }] 
-        }
+        validation: {
+          rules: [
+            {
+              type: 'pattern',
+              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            },
+          ],
+        },
       })
-      
+
       field.setValue('invalid')
       let result = field.validate()
       expect(result.valid).toBe(false)
-      
+
       field.setValue('valid@example.com')
       result = field.validate()
       expect(result.valid).toBe(true)
@@ -147,14 +149,16 @@ describe('Validation', () => {
 
     it('should use custom error message', () => {
       const form = createForm()
-      const field = form.registerField('name', { 
+      const field = form.registerField('name', {
         type: 'string',
-        validation: { 
-          rules: [{ 
-            type: 'required', 
-            message: 'Name is mandatory' 
-          }] 
-        }
+        validation: {
+          rules: [
+            {
+              type: 'required',
+              message: 'Name is mandatory',
+            },
+          ],
+        },
       })
       field.validate()
       expect(field.getError()).toBe('Name is mandatory')
@@ -162,29 +166,29 @@ describe('Validation', () => {
 
     it('should validate multiple rules', () => {
       const form = createForm()
-      const field = form.registerField('password', { 
+      const field = form.registerField('password', {
         type: 'string',
-        validation: { 
+        validation: {
           rules: [
             { type: 'required' },
             { type: 'minLength', value: 8 },
-            { type: 'maxLength', value: 32 }
-          ] 
-        }
+            { type: 'maxLength', value: 32 },
+          ],
+        },
       })
-      
+
       field.setValue('')
       let result = field.validate()
       expect(result.valid).toBe(false)
-      
+
       field.setValue('short')
       result = field.validate()
       expect(result.valid).toBe(false)
-      
+
       field.setValue('this password is way too long and exceeds the maximum limit')
       result = field.validate()
       expect(result.valid).toBe(false)
-      
+
       field.setValue('validPassword123')
       result = field.validate()
       expect(result.valid).toBe(true)
@@ -192,16 +196,13 @@ describe('Validation', () => {
 
     it('should stop at first failure if configured', () => {
       const form = createForm()
-      const field = form.registerField('name', { 
+      const field = form.registerField('name', {
         type: 'string',
-        validation: { 
-          rules: [
-            { type: 'required' },
-            { type: 'minLength', value: 5 }
-          ]
-        }
+        validation: {
+          rules: [{ type: 'required' }, { type: 'minLength', value: 5 }],
+        },
       })
-      
+
       field.setValue('ab')
       const result = field.validate()
       expect(result.valid).toBe(false)
@@ -212,20 +213,22 @@ describe('Validation', () => {
   describe('async validation', () => {
     it('should support async custom validator - pass', async () => {
       const form = createForm()
-      const field = form.registerField('username', { 
+      const field = form.registerField('username', {
         type: 'string',
-        validation: { 
-          rules: [{ 
-            type: 'custom', 
-            validator: async (value: string) => {
-              await new Promise(r => setTimeout(r, 10))
-              return value !== 'taken'
+        validation: {
+          rules: [
+            {
+              type: 'custom',
+              validator: async (value: string) => {
+                await new Promise((r) => setTimeout(r, 10))
+                return value !== 'taken'
+              },
+              message: 'Username is already taken',
             },
-            message: 'Username is already taken'
-          }] 
-        }
+          ],
+        },
       })
-      
+
       field.setValue('available')
       const result = await field.validate()
       expect(result.valid).toBe(true)
@@ -233,20 +236,22 @@ describe('Validation', () => {
 
     it('should support async custom validator - fail', async () => {
       const form = createForm()
-      const field = form.registerField('username', { 
+      const field = form.registerField('username', {
         type: 'string',
-        validation: { 
-          rules: [{ 
-            type: 'custom', 
-            validator: async (value: string) => {
-              await new Promise(r => setTimeout(r, 10))
-              return value !== 'taken'
+        validation: {
+          rules: [
+            {
+              type: 'custom',
+              validator: async (value: string) => {
+                await new Promise((r) => setTimeout(r, 10))
+                return value !== 'taken'
+              },
+              message: 'Username is already taken',
             },
-            message: 'Username is already taken'
-          }] 
-        }
+          ],
+        },
       })
-      
+
       field.setValue('taken')
       const result = await field.validate()
       expect(result.valid).toBe(false)
@@ -255,19 +260,21 @@ describe('Validation', () => {
 
     it('should handle async validator that throws', async () => {
       const form = createForm()
-      const field = form.registerField('name', { 
+      const field = form.registerField('name', {
         type: 'string',
-        validation: { 
-          rules: [{ 
-            type: 'custom', 
-            validator: async () => {
-              throw new Error('Validation error')
+        validation: {
+          rules: [
+            {
+              type: 'custom',
+              validator: async () => {
+                throw new Error('Validation error')
+              },
+              message: 'Custom validation failed',
             },
-            message: 'Custom validation failed'
-          }] 
-        }
+          ],
+        },
       })
-      
+
       field.setValue('test')
       const result = await field.validate()
       expect(result.valid).toBe(false)
@@ -275,19 +282,21 @@ describe('Validation', () => {
 
     it('should track validating state during async validation', async () => {
       const form = createForm()
-      const field = form.registerField('name', { 
+      const field = form.registerField('name', {
         type: 'string',
-        validation: { 
-          rules: [{ 
-            type: 'custom', 
-            validator: async () => {
-              await new Promise(r => setTimeout(r, 50))
-              return true
-            }
-          }] 
-        }
+        validation: {
+          rules: [
+            {
+              type: 'custom',
+              validator: async () => {
+                await new Promise((r) => setTimeout(r, 50))
+                return true
+              },
+            },
+          ],
+        },
       })
-      
+
       expect(field.getState().validating).toBe(false)
       const promise = field.validate()
       expect(field.getState().validating).toBe(true)
@@ -297,21 +306,23 @@ describe('Validation', () => {
 
     it('should support sync custom validator function', () => {
       const form = createForm()
-      const field = form.registerField('name', { 
+      const field = form.registerField('name', {
         type: 'string',
-        validation: { 
-          rules: [{ 
-            type: 'custom', 
-            validator: (value: string) => value.length >= 3,
-            message: 'Must be at least 3 characters'
-          }] 
-        }
+        validation: {
+          rules: [
+            {
+              type: 'custom',
+              validator: (value: string) => value.length >= 3,
+              message: 'Must be at least 3 characters',
+            },
+          ],
+        },
       })
-      
+
       field.setValue('ab')
       let result = field.validate()
       expect(result.valid).toBe(false)
-      
+
       field.setValue('abc')
       result = field.validate()
       expect(result.valid).toBe(true)
@@ -321,15 +332,15 @@ describe('Validation', () => {
   describe('validation result aggregation', () => {
     it('should aggregate errors from multiple fields', async () => {
       const form = createForm()
-      form.registerField('name', { 
-        type: 'string', 
-        validation: { rules: [{ type: 'required' }] } 
+      form.registerField('name', {
+        type: 'string',
+        validation: { rules: [{ type: 'required' }] },
       })
-      form.registerField('email', { 
-        type: 'string', 
-        validation: { rules: [{ type: 'required' }] } 
+      form.registerField('email', {
+        type: 'string',
+        validation: { rules: [{ type: 'required' }] },
       })
-      
+
       const result = await form.validate()
       expect(result.valid).toBe(false)
       expect(result.fields.name.valid).toBe(false)
@@ -339,13 +350,13 @@ describe('Validation', () => {
 
     it('should return isValid state', async () => {
       const form = createForm()
-      const field = form.registerField('name', { 
+      const field = form.registerField('name', {
         type: 'string',
-        validation: { rules: [{ type: 'required' }] }
+        validation: { rules: [{ type: 'required' }] },
       })
       await form.validate()
       expect(form.getState().isValid).toBe(false)
-      
+
       field.setValue('valid')
       await form.validate()
       expect(form.getState().isValid).toBe(true)
@@ -353,23 +364,23 @@ describe('Validation', () => {
 
     it('should only validate visible fields if configured', async () => {
       const form = createForm()
-      form.registerField('name', { 
+      form.registerField('name', {
         type: 'string',
         visible: true,
-        validation: { 
+        validation: {
           rules: [{ type: 'required' }],
-          validateVisibleOnly: true
-        } 
+          validateVisibleOnly: true,
+        },
       })
-      form.registerField('hidden', { 
+      form.registerField('hidden', {
         type: 'string',
         visible: false,
-        validation: { 
+        validation: {
           rules: [{ type: 'required' }],
-          validateVisibleOnly: true
-        } 
+          validateVisibleOnly: true,
+        },
       })
-      
+
       const result = await form.validate()
       expect(result.valid).toBe(false)
       expect(result.fields.name).toBeDefined()
@@ -378,23 +389,19 @@ describe('Validation', () => {
 
     it('should collect all error messages', async () => {
       const form = createForm()
-      form.registerField('name', { 
-        type: 'string', 
-        validation: { 
-          rules: [
-            { type: 'required', message: 'Name required' }
-          ] 
-        } 
+      form.registerField('name', {
+        type: 'string',
+        validation: {
+          rules: [{ type: 'required', message: 'Name required' }],
+        },
       })
-      form.registerField('email', { 
-        type: 'string', 
-        validation: { 
-          rules: [
-            { type: 'required', message: 'Email required' }
-          ] 
-        } 
+      form.registerField('email', {
+        type: 'string',
+        validation: {
+          rules: [{ type: 'required', message: 'Email required' }],
+        },
       })
-      
+
       const result = await form.validate()
       expect(result.errors).toContain('Name required')
       expect(result.errors).toContain('Email required')
@@ -405,12 +412,12 @@ describe('Validation', () => {
     it('should validate with Zod schema - valid data', async () => {
       const schema = z.object({
         name: z.string().min(3),
-        email: z.string().email()
+        email: z.string().email(),
       })
       const form = createForm({ zodSchema: schema })
       form.registerField('name', { type: 'string' })
       form.registerField('email', { type: 'string' })
-      
+
       form.setValues({ name: 'John', email: 'john@example.com' })
       const result = await form.validate()
       expect(result.valid).toBe(true)
@@ -419,12 +426,12 @@ describe('Validation', () => {
     it('should validate with Zod schema - invalid data', async () => {
       const schema = z.object({
         name: z.string().min(3),
-        email: z.string().email()
+        email: z.string().email(),
       })
       const form = createForm({ zodSchema: schema })
       form.registerField('name', { type: 'string' })
       form.registerField('email', { type: 'string' })
-      
+
       form.setValues({ name: 'ab', email: 'invalid' })
       const result = await form.validate()
       expect(result.valid).toBe(false)
@@ -433,15 +440,15 @@ describe('Validation', () => {
     it('should extract field errors from Zod validation', async () => {
       const schema = z.object({
         name: z.string().min(3, 'Name must be at least 3 characters'),
-        email: z.string().email('Invalid email format')
+        email: z.string().email('Invalid email format'),
       })
       const form = createForm({ zodSchema: schema })
       form.registerField('name', { type: 'string' })
       form.registerField('email', { type: 'string' })
-      
+
       form.setValues({ name: 'ab', email: 'invalid' })
       const result = await form.validate()
-      
+
       expect(result.fields.name.valid).toBe(false)
       expect(result.fields.email.valid).toBe(false)
       expect(result.fields.name.errors).toContain('Name must be at least 3 characters')
@@ -450,15 +457,15 @@ describe('Validation', () => {
 
     it('should validate single field with Zod', async () => {
       const schema = z.object({
-        age: z.number().min(18, 'Must be 18 or older')
+        age: z.number().min(18, 'Must be 18 or older'),
       })
       const form = createForm({ zodSchema: schema })
       form.registerField('age', { type: 'number' })
-      
+
       form.setFieldValue('age', 15)
       const result = await form.validateField('age')
       expect(result.valid).toBe(false)
-      
+
       form.setFieldValue('age', 25)
       const result2 = await form.validateField('age')
       expect(result2.valid).toBe(true)
@@ -468,13 +475,13 @@ describe('Validation', () => {
       const schema = z.object({
         user: z.object({
           name: z.string().min(1),
-          email: z.string().email()
-        })
+          email: z.string().email(),
+        }),
       })
       const form = createForm({ zodSchema: schema })
       form.registerField('user.name', { type: 'string' })
       form.registerField('user.email', { type: 'string' })
-      
+
       form.setValues({ user: { name: '', email: 'invalid' } })
       const result = await form.validate()
       expect(result.valid).toBe(false)
@@ -483,12 +490,12 @@ describe('Validation', () => {
     it('should handle Zod optional fields', async () => {
       const schema = z.object({
         name: z.string(),
-        nickname: z.string().optional()
+        nickname: z.string().optional(),
       })
       const form = createForm({ zodSchema: schema })
       form.registerField('name', { type: 'string' })
       form.registerField('nickname', { type: 'string' })
-      
+
       form.setValues({ name: 'John' })
       const result = await form.validate()
       expect(result.valid).toBe(true)
@@ -496,11 +503,11 @@ describe('Validation', () => {
 
     it('should handle Zod transforms', async () => {
       const schema = z.object({
-        age: z.string().transform(val => parseInt(val, 10))
+        age: z.string().transform((val) => parseInt(val, 10)),
       })
       const form = createForm({ zodSchema: schema })
       form.registerField('age', { type: 'string' })
-      
+
       form.setValues({ age: '25' })
       const result = await form.validate()
       expect(result.valid).toBe(true)
@@ -508,81 +515,186 @@ describe('Validation', () => {
   })
 
   describe('validation triggers', () => {
-    it('should validate on blur when configured', () => {
-      const form = createForm({ validateOnBlur: true })
-      const field = form.registerField('name', { 
+    it('should auto-validate on value change by default (rules without trigger)', () => {
+      const form = createForm()
+      const field = form.registerField('name', {
         type: 'string',
-        validation: { 
-          rules: [{ type: 'required' }],
-          trigger: 'blur'
-        } 
-      })
-      
-      expect(field.getError()).toBeUndefined()
-      field.setTouched(true)
-      expect(field.getError()).toBeDefined()
-    })
-
-    it('should validate on change when configured', () => {
-      const form = createForm({ validateOnChange: true })
-      const field = form.registerField('name', { 
-        type: 'string',
-        validation: { 
+        validation: {
           rules: [{ type: 'minLength', value: 3 }],
-          trigger: 'change'
-        } 
+        },
       })
-      
+
       field.setValue('ab')
-      expect(field.getError()).toBeDefined()
-      
+      expect(field.getError()).toBe('name must be at least 3 characters')
+
       field.setValue('abc')
       expect(field.getError()).toBeUndefined()
     })
 
-    it('should validate on submit by default', async () => {
+    it('should auto-validate on blur by default (rules without trigger)', () => {
       const form = createForm()
-      form.registerField('name', { 
+      const field = form.registerField('name', {
         type: 'string',
-        validation: { rules: [{ type: 'required' }] } 
+        validation: {
+          rules: [{ type: 'required' }],
+        },
       })
-      
+
+      expect(field.getError()).toBeUndefined()
+      field.setTouched(true)
+      expect(field.getError()).toBe('name is required')
+    })
+
+    it('should only validate change-triggered rules on setValue', () => {
+      const form = createForm()
+      const field = form.registerField('name', {
+        type: 'string',
+        validation: {
+          rules: [
+            { type: 'required', trigger: 'blur' },
+            { type: 'minLength', value: 3, trigger: 'change' },
+          ],
+        },
+      })
+
+      field.setValue('ab')
+      expect(field.getError()).toBe('name must be at least 3 characters')
+    })
+
+    it('should only validate blur-triggered rules on setTouched', () => {
+      const form = createForm()
+      const field = form.registerField('name', {
+        type: 'string',
+        validation: {
+          rules: [
+            { type: 'required', trigger: 'blur' },
+            { type: 'minLength', value: 3, trigger: 'change' },
+          ],
+        },
+      })
+
+      field.setValue('')
+      expect(field.getError()).toBe('name must be at least 3 characters')
+
+      field.setTouched(true)
+      expect(field.getError()).toBe('name is required')
+    })
+
+    it('should clear error when triggered validation passes', () => {
+      const form = createForm()
+      const field = form.registerField('name', {
+        type: 'string',
+        validation: {
+          rules: [
+            { type: 'required', trigger: 'blur' },
+            { type: 'minLength', value: 3, trigger: 'change' },
+          ],
+        },
+      })
+
+      field.setValue('ab')
+      expect(field.getError()).toBe('name must be at least 3 characters')
+
+      field.setTouched(true)
+      expect(field.getError()).toBeUndefined()
+    })
+
+    it('should not change error state when no rules match trigger', () => {
+      const form = createForm()
+      const field = form.registerField('name', {
+        type: 'string',
+        validation: {
+          rules: [{ type: 'required', trigger: 'blur' }],
+        },
+      })
+
+      field.setTouched(true)
+      expect(field.getError()).toBe('name is required')
+
+      field.setValue('test')
+      expect(field.getError()).toBe('name is required')
+    })
+
+    it('should support array triggers on a rule', () => {
+      const form = createForm()
+      const field = form.registerField('name', {
+        type: 'string',
+        validation: {
+          rules: [{ type: 'minLength', value: 3, trigger: ['change', 'blur'] }],
+        },
+      })
+
+      field.setValue('ab')
+      expect(field.getError()).toBe('name must be at least 3 characters')
+
+      field.setError(undefined)
+      field.setTouched(true)
+      expect(field.getError()).toBe('name must be at least 3 characters')
+    })
+
+    it('should validate all rules on submit regardless of trigger', async () => {
+      const form = createForm()
+      form.registerField('name', {
+        type: 'string',
+        validation: {
+          rules: [
+            { type: 'required', trigger: 'blur' },
+            { type: 'minLength', value: 3, trigger: 'change' },
+          ],
+        },
+      })
+
       await form.submit()
       expect(form.getState().isValid).toBe(false)
+    })
+
+    it('should validate all rules when validate() called without trigger', () => {
+      const form = createForm()
+      const field = form.registerField('name', {
+        type: 'string',
+        validation: {
+          rules: [
+            { type: 'required', trigger: 'blur' },
+            { type: 'minLength', value: 3, trigger: 'change' },
+          ],
+        },
+      })
+
+      field.setValue('')
+      const result = field.validate()
+      expect(result.valid).toBe(false)
+      expect(result.errors.length).toBe(1)
     })
   })
 
   describe('createValidator utility', () => {
     it('should create validator from rules', () => {
-      const rules: ValidationRule[] = [
-        { type: 'required' },
-        { type: 'minLength', value: 3 }
-      ]
+      const rules: ValidationRule[] = [{ type: 'required' }, { type: 'minLength', value: 3 }]
       const validator = createValidator(rules)
-      
+
       let result = validator('')
       expect(result.valid).toBe(false)
-      
+
       result = validator('ab')
       expect(result.valid).toBe(false)
-      
+
       result = validator('valid')
       expect(result.valid).toBe(true)
     })
 
     it('should support custom validator in createValidator', async () => {
       const rules: ValidationRule[] = [
-        { 
+        {
           type: 'custom',
           validator: (value: string) => value.startsWith('test'),
-          message: 'Must start with test'
-        }
+          message: 'Must start with test',
+        },
       ]
       const validator = createValidator(rules)
-      
+
       let result = validator('invalid')
       expect(result.valid).toBe(false)
-      
+
       result = validator('test-valid')
       expect(result.valid).toBe(true)
     })

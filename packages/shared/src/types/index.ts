@@ -14,16 +14,11 @@ export type {
 } from './form'
 
 // Field types
-export type {
-  FieldType,
-  FieldSchema,
-  FieldState,
-  FieldMeta,
-  FieldInstance,
-} from './field'
+export type { FieldType, FieldSchema, FieldState, FieldMeta, FieldInstance } from './field'
 
 // Validation types
 export type {
+  ValidationTrigger,
   ValidationRule,
   ValidationConfig,
   ValidationResult,

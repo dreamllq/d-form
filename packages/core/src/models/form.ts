@@ -116,10 +116,6 @@ export class Form {
     if (this._options.onValuesChange) {
       this._options.onValuesChange(this.getValues(), path)
     }
-
-    if (this._options.validateOnChange && field?.meta.schema?.validation?.trigger === 'change') {
-      field.validate()
-    }
   }
 
   getFieldState(path: string): FieldState | undefined {
@@ -168,13 +164,6 @@ export class Form {
     const field = this._fields.get(path)
     if (field) {
       field.setTouched(touched)
-    }
-
-    if (touched && this._options.validateOnBlur) {
-      const field = this._fields.get(path)
-      if (field?.meta.schema?.validation?.trigger === 'blur') {
-        field.validate()
-      }
     }
   }
 

@@ -6,22 +6,27 @@ describe('Integration Tests', () => {
   describe('Complete Form Workflow', () => {
     it('should handle complete form lifecycle: create -> input -> validate -> submit', async () => {
       const onSubmit = vi.fn()
-      
+
       const form = createForm({
         schema: {
           type: 'object',
           properties: {
-            username: { 
+            username: {
               type: 'string',
-              validation: { rules: [{ type: 'required' }, { type: 'minLength', value: 3 }] }
+              validation: { rules: [{ type: 'required' }, { type: 'minLength', value: 3 }] },
             },
-            email: { 
+            email: {
               type: 'string',
-              validation: { rules: [{ type: 'required' }, { type: 'pattern', value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ }] }
-            }
-          }
+              validation: {
+                rules: [
+                  { type: 'required' },
+                  { type: 'pattern', value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
+                ],
+              },
+            },
+          },
         },
-        onSubmit
+        onSubmit,
       })
 
       expect(form.getState().submitCount).toBe(0)
@@ -36,7 +41,7 @@ describe('Integration Tests', () => {
 
       form.setFieldValue('username', 'ab')
       form.setFieldValue('email', 'invalid-email')
-      
+
       const validationResult = await form.validate()
       expect(validationResult.valid).toBe(false)
       expect(validationResult.fields.username.valid).toBe(false)
@@ -53,7 +58,7 @@ describe('Integration Tests', () => {
       expect(onSubmit).toHaveBeenCalledTimes(1)
       expect(onSubmit).toHaveBeenCalledWith({
         username: 'validuser',
-        email: 'valid@example.com'
+        email: 'valid@example.com',
       })
       expect(form.getState().submitCount).toBe(1)
       expect(form.getState().submitted).toBe(true)
@@ -66,9 +71,9 @@ describe('Integration Tests', () => {
           type: 'object',
           properties: {
             name: { type: 'string' },
-            email: { type: 'string' }
-          }
-        }
+            email: { type: 'string' },
+          },
+        },
       })
 
       expect(form.getState().dirty).toBe(false)
@@ -90,7 +95,7 @@ describe('Integration Tests', () => {
 
     it('should handle nested field values in complete workflow', async () => {
       const onSubmit = vi.fn()
-      
+
       const form = createForm({
         schema: {
           type: 'object',
@@ -98,10 +103,10 @@ describe('Integration Tests', () => {
             'user.name': { type: 'string', validation: { rules: [{ type: 'required' }] } },
             'user.email': { type: 'string' },
             'address.city': { type: 'string' },
-            'address.zip': { type: 'string' }
-          }
+            'address.zip': { type: 'string' },
+          },
         },
-        onSubmit
+        onSubmit,
       })
 
       form.setFieldValue('user.name', 'John Doe')
@@ -111,23 +116,23 @@ describe('Integration Tests', () => {
 
       expect(form.getFieldValue('user')).toEqual({
         name: 'John Doe',
-        email: 'john@example.com'
+        email: 'john@example.com',
       })
       expect(form.getFieldValue('address')).toEqual({
         city: 'New York',
-        zip: '10001'
+        zip: '10001',
       })
 
       await form.submit()
       expect(onSubmit).toHaveBeenCalledWith({
         user: {
           name: 'John Doe',
-          email: 'john@example.com'
+          email: 'john@example.com',
         },
         address: {
           city: 'New York',
-          zip: '10001'
-        }
+          zip: '10001',
+        },
       })
     })
   })
@@ -139,20 +144,20 @@ describe('Integration Tests', () => {
           type: 'object',
           properties: {
             country: { type: 'string' },
-            city: { type: 'string' }
-          }
-        }
+            city: { type: 'string' },
+          },
+        },
       })
 
       const reaction = createReaction(form, 'country', {
         target: 'city',
         when: '{{$self.value === "US"}}',
         fulfill: {
-          state: { value: 'New York' }
+          state: { value: 'New York' },
         },
         otherwise: {
-          state: { value: 'Other' }
-        }
+          state: { value: 'Other' },
+        },
       })
 
       form.setFieldValue('country', 'US')
@@ -170,16 +175,16 @@ describe('Integration Tests', () => {
           type: 'object',
           properties: {
             hasDiscount: { type: 'boolean' },
-            discountCode: { type: 'string' }
-          }
-        }
+            discountCode: { type: 'string' },
+          },
+        },
       })
 
       const reaction = createReaction(form, 'hasDiscount', {
         target: 'discountCode',
         fulfill: {
-          state: { visible: '{{$self.value === true}}' }
-        }
+          state: { visible: '{{$self.value === true}}' },
+        },
       })
       reaction.run()
       expect(form.getField('discountCode')?.getState().visible).toBe(false)
@@ -189,7 +194,7 @@ describe('Integration Tests', () => {
 
       form.setFieldValue('hasDiscount', false)
       expect(form.getField('discountCode')?.getState().visible).toBe(false)
-      
+
       reaction.dispose()
     })
 
@@ -200,20 +205,20 @@ describe('Integration Tests', () => {
           properties: {
             agreeTerms: { type: 'boolean' },
             agreePrivacy: { type: 'boolean' },
-            submitBtn: { type: 'string' }
-          }
-        }
+            submitBtn: { type: 'string' },
+          },
+        },
       })
 
       createReaction(form, 'submitBtn', {
         dependencies: ['agreeTerms', 'agreePrivacy'],
         when: '{{$deps[0] === true && $deps[1] === true}}',
         fulfill: {
-          state: { disabled: false }
+          state: { disabled: false },
         },
         otherwise: {
-          state: { disabled: true }
-        }
+          state: { disabled: true },
+        },
       })
 
       expect(form.getField('submitBtn')?.getState().disabled).toBe(true)
@@ -236,20 +241,20 @@ describe('Integration Tests', () => {
             mode: { type: 'string' },
             field1: { type: 'string' },
             field2: { type: 'string' },
-            field3: { type: 'string' }
-          }
-        }
+            field3: { type: 'string' },
+          },
+        },
       })
 
       createReaction(form, 'mode', {
         target: ['field1', 'field2', 'field3'],
         when: '{{$self.value === "readonly"}}',
         fulfill: {
-          state: { disabled: true }
+          state: { disabled: true },
         },
         otherwise: {
-          state: { disabled: false }
-        }
+          state: { disabled: false },
+        },
       })
 
       expect(form.getField('field1')?.getState().disabled).toBe(false)
@@ -273,16 +278,16 @@ describe('Integration Tests', () => {
           type: 'object',
           properties: {
             source: { type: 'string' },
-            target: { type: 'string' }
-          }
-        }
+            target: { type: 'string' },
+          },
+        },
       })
 
       createReaction(form, 'source', {
         target: 'target',
         fulfill: {
-          state: { value: '{{$self.value}}' }
-        }
+          state: { value: '{{$self.value}}' },
+        },
       })
 
       form.setFieldValue('source', 'Hello')
@@ -298,16 +303,16 @@ describe('Integration Tests', () => {
           type: 'object',
           properties: {
             trigger: { type: 'string' },
-            target: { type: 'string' }
-          }
-        }
+            target: { type: 'string' },
+          },
+        },
       })
 
       const reaction = createReaction(form, 'trigger', {
         target: 'target',
         fulfill: {
-          state: { value: 'reacted' }
-        }
+          state: { value: 'reacted' },
+        },
       })
 
       form.setFieldValue('trigger', 'first')
@@ -327,34 +332,38 @@ describe('Integration Tests', () => {
         schema: {
           type: 'object',
           properties: {
-            username: { 
+            username: {
               type: 'string',
-              validation: { 
+              validation: {
                 rules: [
                   { type: 'required' },
                   { type: 'minLength', value: 3 },
                   {
                     type: 'custom',
                     validator: async (value: string) => {
-                      await new Promise(r => setTimeout(r, 10))
+                      await new Promise((r) => setTimeout(r, 10))
                       return value !== 'taken'
                     },
-                    message: 'Username is already taken'
-                  }
-                ]
-              }
+                    message: 'Username is already taken',
+                  },
+                ],
+              },
             },
             email: {
               type: 'string',
               validation: {
                 rules: [
                   { type: 'required' },
-                  { type: 'pattern', value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Invalid email' }
-                ]
-              }
-            }
-          }
-        }
+                  {
+                    type: 'pattern',
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: 'Invalid email',
+                  },
+                ],
+              },
+            },
+          },
+        },
       })
 
       form.setFieldValue('username', 'ab')
@@ -380,30 +389,55 @@ describe('Integration Tests', () => {
             field: {
               type: 'string',
               validation: {
-                rules: [{
-                  type: 'custom',
-                  validator: async (value: string) => {
-                    await new Promise(r => setTimeout(r, 50))
-                    return value.length >= 3
+                rules: [
+                  {
+                    type: 'custom',
+                    trigger: 'blur',
+                    validator: async (value: string) => {
+                      await new Promise((r) => setTimeout(r, 50))
+                      return value.length >= 3
+                    },
+                    message: 'Too short',
                   },
-                  message: 'Too short'
-                }]
-              }
-            }
-          }
-        }
+                ],
+              },
+            },
+          },
+        },
       })
 
       form.setFieldValue('field', 'ab')
-      
       expect(form.getField('field')?.getState().validating).toBe(false)
-      const promise = form.validateField('field')
+
+      form.getField('field')?.setTouched(true)
       expect(form.getField('field')?.getState().validating).toBe(true)
-      
-      await promise
-      
+
+      await new Promise((r) => setTimeout(r, 60))
       expect(form.getField('field')?.getState().validating).toBe(false)
-      expect(form.getField('field')?.getError()).toBe('Too short')
+    })
+
+    it('should handle validation on blur trigger', async () => {
+      const form = createForm({
+        schema: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              validation: {
+                rules: [{ type: 'required', trigger: 'blur' }],
+              },
+            },
+          },
+        },
+      })
+
+      const field = form.getField('name')
+
+      field?.setValue('')
+      expect(field?.getError()).toBeUndefined()
+
+      field?.setTouched(true)
+      expect(field?.getError()).toBe('name is required')
     })
 
     it('should validate multiple fields in parallel', async () => {
@@ -414,41 +448,47 @@ describe('Integration Tests', () => {
             field1: {
               type: 'string',
               validation: {
-                rules: [{
-                  type: 'custom',
-                  validator: async () => {
-                    await new Promise(r => setTimeout(r, 30))
-                    return true
-                  }
-                }]
-              }
+                rules: [
+                  {
+                    type: 'custom',
+                    validator: async () => {
+                      await new Promise((r) => setTimeout(r, 30))
+                      return true
+                    },
+                  },
+                ],
+              },
             },
             field2: {
               type: 'string',
               validation: {
-                rules: [{
-                  type: 'custom',
-                  validator: async () => {
-                    await new Promise(r => setTimeout(r, 30))
-                    return true
-                  }
-                }]
-              }
+                rules: [
+                  {
+                    type: 'custom',
+                    validator: async () => {
+                      await new Promise((r) => setTimeout(r, 30))
+                      return true
+                    },
+                  },
+                ],
+              },
             },
             field3: {
               type: 'string',
               validation: {
-                rules: [{
-                  type: 'custom',
-                  validator: async () => {
-                    await new Promise(r => setTimeout(r, 30))
-                    return true
-                  }
-                }]
-              }
-            }
-          }
-        }
+                rules: [
+                  {
+                    type: 'custom',
+                    validator: async () => {
+                      await new Promise((r) => setTimeout(r, 30))
+                      return true
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
       })
 
       form.setFieldValue('field1', 'value1')
@@ -473,15 +513,15 @@ describe('Integration Tests', () => {
               type: 'string',
               validation: {
                 rules: [{ type: 'required' }],
-                trigger: 'blur'
-              }
-            }
-          }
-        }
+                trigger: 'blur',
+              },
+            },
+          },
+        },
       })
 
       const field = form.getField('name')
-      
+
       field?.setValue('')
       expect(field?.getError()).toBeUndefined()
 
@@ -499,11 +539,11 @@ describe('Integration Tests', () => {
               type: 'string',
               validation: {
                 rules: [{ type: 'minLength', value: 8, message: 'Too short' }],
-                trigger: 'change'
-              }
-            }
-          }
-        }
+                trigger: 'change',
+              },
+            },
+          },
+        },
       })
 
       const field = form.getField('password')
@@ -525,19 +565,19 @@ describe('Integration Tests', () => {
               visible: true,
               validation: {
                 rules: [{ type: 'required' }],
-                validateVisibleOnly: true
-              }
+                validateVisibleOnly: true,
+              },
             },
             hidden: {
               type: 'string',
               visible: false,
               validation: {
                 rules: [{ type: 'required' }],
-                validateVisibleOnly: true
-              }
-            }
-          }
-        }
+                validateVisibleOnly: true,
+              },
+            },
+          },
+        },
       })
 
       const result = await form.validate()
@@ -555,22 +595,22 @@ describe('Integration Tests', () => {
           properties: {
             name: {
               type: 'string',
-              validation: { rules: [{ type: 'required', message: 'Name is required' }] }
+              validation: { rules: [{ type: 'required', message: 'Name is required' }] },
             },
             email: {
               type: 'string',
-              validation: { rules: [{ type: 'required', message: 'Email is required' }] }
+              validation: { rules: [{ type: 'required', message: 'Email is required' }] },
             },
             age: {
               type: 'number',
-              validation: { rules: [{ type: 'min', value: 18, message: 'Must be 18 or older' }] }
-            }
-          }
-        }
+              validation: { rules: [{ type: 'min', value: 18, message: 'Must be 18 or older' }] },
+            },
+          },
+        },
       })
 
       form.setFieldValue('age', 15)
-      
+
       const result = await form.validate()
 
       expect(result.valid).toBe(false)
@@ -588,17 +628,19 @@ describe('Integration Tests', () => {
             field: {
               type: 'string',
               validation: {
-                rules: [{
-                  type: 'custom',
-                  validator: async () => {
-                    throw new Error('Network error')
+                rules: [
+                  {
+                    type: 'custom',
+                    validator: async () => {
+                      throw new Error('Network error')
+                    },
+                    message: 'Validation failed due to network error',
                   },
-                  message: 'Validation failed due to network error'
-                }]
-              }
-            }
-          }
-        }
+                ],
+              },
+            },
+          },
+        },
       })
 
       form.setFieldValue('field', 'test')
@@ -615,10 +657,10 @@ describe('Integration Tests', () => {
           properties: {
             name: {
               type: 'string',
-              validation: { rules: [{ type: 'required' }] }
-            }
-          }
-        }
+              validation: { rules: [{ type: 'required' }] },
+            },
+          },
+        },
       })
 
       await form.validate()
@@ -634,9 +676,9 @@ describe('Integration Tests', () => {
           type: 'object',
           properties: {
             field1: { type: 'string' },
-            field2: { type: 'string' }
-          }
-        }
+            field2: { type: 'string' },
+          },
+        },
       })
 
       form.setFieldError('field1', 'Error 1')
@@ -644,7 +686,7 @@ describe('Integration Tests', () => {
 
       expect(form.getErrors()).toEqual({
         field1: 'Error 1',
-        field2: 'Error 2'
+        field2: 'Error 2',
       })
 
       form.clearErrors()
@@ -655,18 +697,18 @@ describe('Integration Tests', () => {
 
     it('should prevent submission when validation fails', async () => {
       const onSubmit = vi.fn()
-      
+
       const form = createForm({
         schema: {
           type: 'object',
           properties: {
             required: {
               type: 'string',
-              validation: { rules: [{ type: 'required' }] }
-            }
-          }
+              validation: { rules: [{ type: 'required' }] },
+            },
+          },
         },
-        onSubmit
+        onSubmit,
       })
 
       await form.submit()
@@ -682,16 +724,16 @@ describe('Integration Tests', () => {
           type: 'object',
           properties: {
             field1: { type: 'string' },
-            field2: { type: 'string' }
-          }
-        }
+            field2: { type: 'string' },
+          },
+        },
       })
 
       expect(() => {
         createReaction(form, 'field1', {
           dependencies: ['field2'],
           target: 'field2',
-          fulfill: { state: { visible: true } }
+          fulfill: { state: { visible: true } },
         })
       }).toThrow(/Circular dependency detected/)
     })
@@ -700,7 +742,7 @@ describe('Integration Tests', () => {
   describe('Real-world Scenarios', () => {
     it('should handle registration form with confirm password validation', async () => {
       const onSubmit = vi.fn()
-      
+
       const form = createForm({
         schema: {
           type: 'object',
@@ -710,18 +752,26 @@ describe('Integration Tests', () => {
               validation: {
                 rules: [
                   { type: 'required', message: 'Username is required' },
-                  { type: 'minLength', value: 3, message: 'Username must be at least 3 characters' }
-                ]
-              }
+                  {
+                    type: 'minLength',
+                    value: 3,
+                    message: 'Username must be at least 3 characters',
+                  },
+                ],
+              },
             },
             password: {
               type: 'string',
               validation: {
                 rules: [
                   { type: 'required', message: 'Password is required' },
-                  { type: 'minLength', value: 8, message: 'Password must be at least 8 characters' }
-                ]
-              }
+                  {
+                    type: 'minLength',
+                    value: 8,
+                    message: 'Password must be at least 8 characters',
+                  },
+                ],
+              },
             },
             confirmPassword: {
               type: 'string',
@@ -733,14 +783,14 @@ describe('Integration Tests', () => {
                     validator: (value: string) => {
                       return value === form.getFieldValue('password')
                     },
-                    message: 'Passwords do not match'
-                  }
-                ]
-              }
-            }
-          }
+                    message: 'Passwords do not match',
+                  },
+                ],
+              },
+            },
+          },
         },
-        onSubmit
+        onSubmit,
       })
 
       form.setFieldValue('username', 'validuser')
@@ -761,20 +811,20 @@ describe('Integration Tests', () => {
           properties: {
             accountType: { type: 'string' },
             companyName: { type: 'string' },
-            companySize: { type: 'string' }
-          }
-        }
+            companySize: { type: 'string' },
+          },
+        },
       })
 
       createReaction(form, 'accountType', {
         target: ['companyName', 'companySize'],
         when: '{{$self.value === "business"}}',
         fulfill: {
-          state: { visible: true }
+          state: { visible: true },
         },
         otherwise: {
-          state: { visible: false }
-        }
+          state: { visible: false },
+        },
       })
 
       form.setFieldValue('accountType', 'personal')
@@ -793,18 +843,18 @@ describe('Integration Tests', () => {
           properties: {
             price: { type: 'number' },
             quantity: { type: 'number' },
-            total: { type: 'number' }
-          }
-        }
+            total: { type: 'number' },
+          },
+        },
       })
 
       createReaction(form, 'total', {
         dependencies: ['price', 'quantity'],
         fulfill: {
-          state: { 
-            value: '{{($dependencies.price || 0) * ($dependencies.quantity || 0)}}' 
-          }
-        }
+          state: {
+            value: '{{($dependencies.price || 0) * ($dependencies.quantity || 0)}}',
+          },
+        },
       })
 
       form.setFieldValue('price', 10)
@@ -825,9 +875,9 @@ describe('Integration Tests', () => {
           type: 'object',
           properties: {
             name: { type: 'string' },
-            email: { type: 'string' }
-          }
-        }
+            email: { type: 'string' },
+          },
+        },
       })
 
       form.setFieldValue('name', 'Jane')
@@ -842,9 +892,9 @@ describe('Integration Tests', () => {
           type: 'object',
           properties: {
             name: { type: 'string' },
-            email: { type: 'string' }
-          }
-        }
+            email: { type: 'string' },
+          },
+        },
       })
 
       expect(restoredForm.getFieldValue('name')).toBe('Jane')
@@ -853,7 +903,7 @@ describe('Integration Tests', () => {
 
     it('should handle async username availability check', async () => {
       const takenUsernames = ['admin', 'user', 'test']
-      
+
       const form = createForm({
         schema: {
           type: 'object',
@@ -867,16 +917,16 @@ describe('Integration Tests', () => {
                   {
                     type: 'custom',
                     validator: async (value: string) => {
-                      await new Promise(r => setTimeout(r, 20))
+                      await new Promise((r) => setTimeout(r, 20))
                       return !takenUsernames.includes(value)
                     },
-                    message: 'Username is already taken'
-                  }
-                ]
-              }
-            }
-          }
-        }
+                    message: 'Username is already taken',
+                  },
+                ],
+              },
+            },
+          },
+        },
       })
 
       form.setFieldValue('username', 'admin')
