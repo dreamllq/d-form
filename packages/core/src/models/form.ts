@@ -227,6 +227,8 @@ export class Form {
   async submit(onSubmit?: () => Promise<void>): Promise<void> {
     this._state.submitting = true
 
+    this._fields.forEach((field) => field.setTouched(true))
+
     const validationResult = await this.validate()
 
     if (!validationResult.valid) {
