@@ -24,14 +24,12 @@
             :initial-values="liveInitialValues"
             @submit="handlePreviewSubmit"
           >
-            <div class="preview-fields">
-              <div v-for="(_, key) in liveSchema.properties" :key="key" class="field-row">
-                <label class="field-label">{{
-                  (liveSchema.properties[key] as any)?.title || key
-                }}</label>
-                <DField :name="key as string" :schema="liveSchema.properties[key as string]" />
-              </div>
-            </div>
+            <DFormItem
+              v-for="(_, key) in liveSchema.properties"
+              :key="key"
+              :name="String(key)"
+              :schema="liveSchema.properties[key as string]"
+            />
             <el-button type="primary" native-type="submit" size="small">Submit</el-button>
           </DForm>
           <div v-else class="empty-state">Edit and apply a schema to see the preview</div>
@@ -48,7 +46,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { DForm, DField } from '@d-form/vue'
+import { DForm, DFormItem } from '@d-form/vue'
 import type { FormSchema } from '@d-form/shared'
 import { ElButton } from 'element-plus'
 
@@ -177,25 +175,6 @@ const handlePreviewSubmit = (values: any) => {
 
 .preview-content {
   padding: 20px;
-}
-
-.preview-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.field-row {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.field-label {
-  font-size: 13px;
-  font-weight: 500;
-  color: #606266;
 }
 
 .empty-state {

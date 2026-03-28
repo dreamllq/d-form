@@ -6,86 +6,82 @@
     <div class="section">
       <h3 class="section-title">Country-City Cascading</h3>
       <div class="form-card">
-        <div class="field-group">
-          <div class="field-row">
-            <label class="field-label">Country</label>
-            <el-select v-model="cascadingValues.country" @change="onCountryChange">
-              <el-option label="United States" value="US" />
-              <el-option label="United Kingdom" value="UK" />
-              <el-option label="China" value="CN" />
-              <el-option label="Japan" value="JP" />
-            </el-select>
-          </div>
-          <div class="field-row">
-            <label class="field-label">City</label>
-            <el-select v-model="cascadingValues.city">
-              <el-option
-                v-for="opt in cityOptions"
-                :key="opt.value"
-                :label="opt.label"
-                :value="opt.value"
-              />
-            </el-select>
-          </div>
-        </div>
-        <pre class="state-preview">{{ JSON.stringify(cascadingValues, null, 2) }}</pre>
+        <DForm
+          ref="cascadingFormRef"
+          :schema="cascadingSchema"
+          :initial-values="{ country: '', city: '' }"
+          @submit="handleCascadingSubmit"
+        >
+          <DFormItem name="country" :schema="cascadingSchema.properties.country" />
+          <DFormItem name="city" :schema="cityFieldSchema" />
+        </DForm>
+        <pre class="state-preview">{{
+          JSON.stringify(cascadingFormRef?.values ?? { country: '', city: '' }, null, 2)
+        }}</pre>
       </div>
     </div>
 
     <div class="section">
       <h3 class="section-title">Computed Total (Price x Quantity)</h3>
       <div class="form-card">
-        <div class="field-group">
-          <div class="field-row">
-            <label class="field-label">Price</label>
-            <el-input-number v-model="computedValues.price" @change="onComputedChange" />
-          </div>
-          <div class="field-row">
-            <label class="field-label">Quantity</label>
-            <el-input-number v-model="computedValues.quantity" @change="onComputedChange" />
-          </div>
-          <div class="field-row">
-            <label class="field-label">Total</label>
-            <el-input :model-value="computedValues.total" disabled />
-          </div>
-        </div>
-        <pre class="state-preview">{{ JSON.stringify(computedValues, null, 2) }}</pre>
+        <DForm
+          ref="computedFormRef"
+          :schema="computedSchema"
+          :initial-values="{ price: 0, quantity: 1, total: 0 }"
+          @submit="handleComputedSubmit"
+        >
+          <DFormItem name="price" :schema="computedSchema.properties.price" />
+          <DFormItem name="quantity" :schema="computedSchema.properties.quantity" />
+          <DFormItem name="total" :schema="computedSchema.properties.total" />
+        </DForm>
+        <pre class="state-preview">{{
+          JSON.stringify(computedFormRef?.values ?? { price: 0, quantity: 1, total: 0 }, null, 2)
+        }}</pre>
       </div>
     </div>
 
     <div class="section">
       <h3 class="section-title">Show/Hide Conditional Fields</h3>
       <div class="form-card">
-        <div class="field-group">
-          <div class="field-row">
-            <label class="field-label">Account Type</label>
-            <el-radio-group v-model="conditionalValues.accountType" @change="onAccountTypeChange">
-              <el-radio value="personal">Personal</el-radio>
-              <el-radio value="business">Business</el-radio>
-            </el-radio-group>
-          </div>
-          <div v-if="conditionalValues.accountType === 'business'" class="field-row">
-            <label class="field-label">Company Name</label>
-            <el-input v-model="conditionalValues.companyName" placeholder="Enter company name" />
-          </div>
-          <div v-if="conditionalValues.accountType === 'business'" class="field-row">
-            <label class="field-label">Company Size</label>
-            <el-select v-model="conditionalValues.companySize" placeholder="Select size">
-              <el-option label="1-10" value="small" />
-              <el-option label="11-50" value="medium" />
-              <el-option label="50+" value="large" />
-            </el-select>
-          </div>
-        </div>
-        <pre class="state-preview">{{ JSON.stringify(conditionalValues, null, 2) }}</pre>
+        <DForm
+          ref="condFormRef"
+          :schema="conditionalSchema"
+          :initial-values="{ accountType: 'personal', companyName: '', companySize: '' }"
+          @submit="handleCondSubmit"
+        >
+          <DFormItem name="accountType" :schema="conditionalSchema.properties.accountType" />
+          <DFormItem
+            v-if="condFormRef?.values?.accountType === 'business'"
+            name="companyName"
+            :schema="conditionalSchema.properties.companyName"
+          />
+          <DFormItem
+            v-if="condFormRef?.values?.accountType === 'business'"
+            name="companySize"
+            :schema="conditionalSchema.properties.companySize"
+          />
+        </DForm>
+        <pre class="state-preview">{{
+          JSON.stringify(
+            condFormRef?.values ?? { accountType: 'personal', companyName: '', companySize: '' },
+            null,
+            2
+          )
+        }}</pre>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, computed } from 'vue'
-import { ElSelect, ElOption, ElInput, ElInputNumber, ElRadioGroup, ElRadio } from 'element-plus'
+import { ref, computed, watch } from 'vue'
+import { DForm, DFormItem } from '@d-form/vue'
+import type { FormSchema } from '@d-form/shared'
+
+// --- Section 1: Country-City Cascading ---
+
+const cascadingFormRef = ref()
+const selectedCountry = ref('')
 
 const cityMap: Record<string, { label: string; value: string }[]> = {
   US: [
@@ -110,32 +106,118 @@ const cityMap: Record<string, { label: string; value: string }[]> = {
   ],
 }
 
-const cascadingValues = reactive({ country: '', city: '' })
-
-const cityOptions = computed(() => {
-  return cityMap[cascadingValues.country] || []
-})
-
-const onCountryChange = () => {
-  cascadingValues.city = ''
+const cascadingSchema: FormSchema = {
+  type: 'object',
+  properties: {
+    country: {
+      type: 'string',
+      component: 'select',
+      title: 'Country',
+      componentProps: {
+        options: [
+          { label: 'United States', value: 'US' },
+          { label: 'United Kingdom', value: 'UK' },
+          { label: 'China', value: 'CN' },
+          { label: 'Japan', value: 'JP' },
+        ],
+      },
+    },
+  },
 }
 
-const computedValues = reactive({ price: 0, quantity: 1, total: 0 })
+const cityFieldSchema = computed(() => ({
+  type: 'string',
+  component: 'select',
+  title: 'City',
+  componentProps: {
+    options: cityMap[selectedCountry.value] || [],
+  },
+}))
 
-const onComputedChange = () => {
-  computedValues.total = (computedValues.price || 0) * (computedValues.quantity || 0)
+watch(
+  () => cascadingFormRef.value?.values?.country,
+  (newCountry) => {
+    if (newCountry !== selectedCountry.value) {
+      selectedCountry.value = newCountry
+      cascadingFormRef.value?.setFieldValue('city', '')
+    }
+  }
+)
+
+const handleCascadingSubmit = (values: Record<string, unknown>) => {
+  console.warn('Cascading:', values)
 }
-onComputedChange()
 
-const conditionalValues = reactive({
-  accountType: 'personal' as string,
-  companyName: '',
-  companySize: '',
-})
+// --- Section 2: Computed Total ---
 
-const onAccountTypeChange = () => {
-  conditionalValues.companyName = ''
-  conditionalValues.companySize = ''
+const computedFormRef = ref()
+
+const computedSchema: FormSchema = {
+  type: 'object',
+  properties: {
+    price: { type: 'number', component: 'input-number', title: 'Price' },
+    quantity: { type: 'number', component: 'input-number', title: 'Quantity' },
+    total: { type: 'number', component: 'input', title: 'Total', disabled: true },
+  },
+}
+
+watch(
+  () => ({
+    price: computedFormRef.value?.values?.price,
+    qty: computedFormRef.value?.values?.quantity,
+  }),
+  ({ price, qty }) => {
+    const total = (price || 0) * (qty || 0)
+    computedFormRef.value?.setFieldValue('total', total)
+  }
+)
+
+const handleComputedSubmit = (values: Record<string, unknown>) => {
+  console.warn('Computed:', values)
+}
+
+// --- Section 3: Conditional Fields ---
+
+const condFormRef = ref()
+
+const conditionalSchema: FormSchema = {
+  type: 'object',
+  properties: {
+    accountType: {
+      type: 'string',
+      component: 'radio',
+      title: 'Account Type',
+      componentProps: {
+        options: [
+          { label: 'Personal', value: 'personal' },
+          { label: 'Business', value: 'business' },
+        ],
+      },
+    },
+    companyName: {
+      type: 'string',
+      component: 'input',
+      title: 'Company Name',
+      placeholder: 'Enter company name',
+    },
+    companySize: {
+      type: 'string',
+      component: 'select',
+      title: 'Company Size',
+      placeholder: 'Select size',
+      componentProps: {
+        options: [
+          { label: '1-10', value: 'small' },
+          { label: '11-50', value: 'medium' },
+          { label: '50+', value: 'large' },
+        ],
+      },
+    },
+  },
+}
+
+const handleCondSubmit = (values: Record<string, unknown>) => {
+  console.warn('Conditional:', values)
 }
 </script>
 
@@ -170,22 +252,6 @@ const onAccountTypeChange = () => {
   border-radius: 8px;
   padding: 24px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-}
-.field-group {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  margin-bottom: 16px;
-}
-.field-row {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.field-label {
-  font-size: 13px;
-  font-weight: 500;
-  color: #606266;
 }
 .state-preview {
   background: #f5f7fa;

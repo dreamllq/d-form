@@ -4,37 +4,15 @@
     <p class="page-desc">Form validation with built-in rules and custom validators</p>
 
     <div class="form-card">
-      <DForm :schema="schema" :initial-values="initialValues" @submit="handleSubmit">
-        <div class="field-group">
-          <div class="field-row">
-            <label class="field-label">Username (required, min 3 chars)</label>
-            <DField name="username" :schema="schema.properties.username" />
-            <span v-if="errors.username" class="field-error">{{ errors.username }}</span>
-          </div>
-          <div class="field-row">
-            <label class="field-label">Email (required, pattern)</label>
-            <DField name="email" :schema="schema.properties.email" />
-            <span v-if="errors.email" class="field-error">{{ errors.email }}</span>
-          </div>
-          <div class="field-row">
-            <label class="field-label">Password (required, min 8 chars)</label>
-            <DField name="password" :schema="schema.properties.password" />
-            <span v-if="errors.password" class="field-error">{{ errors.password }}</span>
-          </div>
-          <div class="field-row">
-            <label class="field-label">Age (min 18, max 120)</label>
-            <DField name="age" :schema="schema.properties.age" />
-            <span v-if="errors.age" class="field-error">{{ errors.age }}</span>
-          </div>
-          <div class="field-row">
-            <label class="field-label">Website (pattern)</label>
-            <DField name="website" :schema="schema.properties.website" />
-            <span v-if="errors.website" class="field-error">{{ errors.website }}</span>
-          </div>
-        </div>
+      <DForm ref="formRef" :schema="schema" :initial-values="initialValues" @submit="handleSubmit">
+        <DFormItem name="username" :schema="schema.properties.username" />
+        <DFormItem name="email" :schema="schema.properties.email" />
+        <DFormItem name="password" :schema="schema.properties.password" />
+        <DFormItem name="age" :schema="schema.properties.age" />
+        <DFormItem name="website" :schema="schema.properties.website" />
         <div class="button-group">
           <el-button type="primary" native-type="submit">Submit</el-button>
-          <el-button @click="handleReset">Reset</el-button>
+          <el-button @click="() => formRef?.reset()">Reset</el-button>
         </div>
       </DForm>
     </div>
@@ -48,7 +26,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { DForm, DField, useForm } from '@d-form/vue'
+import { DForm, DFormItem } from '@d-form/vue'
 import type { FormSchema } from '@d-form/shared'
 import { ElButton } from 'element-plus'
 
@@ -129,17 +107,11 @@ const initialValues = {
   website: '',
 }
 
-const errors = ref<Record<string, string>>({})
+const formRef = ref()
 const submittedValues = ref<Record<string, any> | null>(null)
 
 const handleSubmit = (values: any) => {
   submittedValues.value = values
-  errors.value = {}
-}
-
-const handleReset = () => {
-  errors.value = {}
-  submittedValues.value = null
 }
 </script>
 
@@ -163,26 +135,6 @@ const handleReset = () => {
   border-radius: 8px;
   padding: 24px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-}
-.field-group {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  margin-bottom: 20px;
-}
-.field-row {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.field-label {
-  font-size: 13px;
-  font-weight: 500;
-  color: #606266;
-}
-.field-error {
-  font-size: 12px;
-  color: #f56c6c;
 }
 .button-group {
   display: flex;

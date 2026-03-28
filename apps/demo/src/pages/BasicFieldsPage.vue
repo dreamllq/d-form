@@ -5,40 +5,14 @@
 
     <div class="form-card">
       <DForm :schema="schema" :initial-values="initialValues" @submit="handleSubmit">
-        <div class="field-group">
-          <div class="field-row">
-            <label class="field-label">Name (Input)</label>
-            <DField name="name" :schema="schema.properties.name" />
-          </div>
-          <div class="field-row">
-            <label class="field-label">Category (Select)</label>
-            <DField name="category" :schema="schema.properties.category" />
-          </div>
-          <div class="field-row">
-            <label class="field-label">Birthday (DatePicker)</label>
-            <DField name="birthday" :schema="schema.properties.birthday" />
-          </div>
-          <div class="field-row">
-            <label class="field-label">Notes (Textarea)</label>
-            <DField name="notes" :schema="schema.properties.notes" />
-          </div>
-          <div class="field-row">
-            <label class="field-label">Quantity (InputNumber)</label>
-            <DField name="quantity" :schema="schema.properties.quantity" />
-          </div>
-          <div class="field-row">
-            <label class="field-label">Gender (Radio)</label>
-            <DField name="gender" :schema="schema.properties.gender" />
-          </div>
-          <div class="field-row">
-            <label class="field-label">Active (Switch)</label>
-            <DField name="active" :schema="schema.properties.active" />
-          </div>
-          <div class="field-row">
-            <label class="field-label">Agree (Checkbox)</label>
-            <DField name="agree" :schema="schema.properties.agree" />
-          </div>
-        </div>
+        <DFormItem name="name" :schema="schema.properties.name" />
+        <DFormItem name="category" :schema="schema.properties.category" />
+        <DFormItem name="birthday" :schema="schema.properties.birthday" />
+        <DFormItem name="notes" :schema="schema.properties.notes" />
+        <DFormItem name="quantity" :schema="schema.properties.quantity" />
+        <DFormItem name="gender" :schema="schema.properties.gender" />
+        <DFormItem name="active" :schema="schema.properties.active" />
+        <DFormItem name="agree" :schema="schema.properties.agree" />
         <el-button type="primary" native-type="submit">Submit</el-button>
       </DForm>
     </div>
@@ -52,7 +26,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { DForm, DField } from '@d-form/vue'
+import { DForm, DFormItem } from '@d-form/vue'
 import type { FormSchema } from '@d-form/shared'
 import { ElButton } from 'element-plus'
 
@@ -136,22 +110,6 @@ const handleSubmit = (values: any) => {
   border-radius: 8px;
   padding: 24px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-}
-.field-group {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  margin-bottom: 20px;
-}
-.field-row {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.field-label {
-  font-size: 13px;
-  font-weight: 500;
-  color: #606266;
 }
 .result-card {
   margin-top: 20px;
