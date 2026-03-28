@@ -53,6 +53,9 @@ importers:
       '@d-form/element-plus':
         specifier: workspace:*
         version: link:../../packages/element-plus
+      '@d-form/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@d-form/vue':
         specifier: workspace:*
         version: link:../../packages/vue

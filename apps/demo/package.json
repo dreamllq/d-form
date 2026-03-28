@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@d-form/shared": "workspace:*",
     "@d-form/core": "workspace:*",
     "@d-form/vue": "workspace:*",
     "@d-form/element-plus": "workspace:*",
