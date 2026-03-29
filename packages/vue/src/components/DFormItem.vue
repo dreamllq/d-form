@@ -14,6 +14,7 @@ const props = defineProps<{
   labelPosition?: 'left' | 'right' | 'top'
   labelWidth?: string | number
   prop?: string | string[]
+  gridSpan?: number
 }>()
 
 const formContext = inject<any>('d-form')
@@ -44,6 +45,7 @@ const labelPosition = computed(() => {
 })
 const showColon = computed(() => uiSchema?.colon ?? false)
 const labelStyle = computed(() => {
+  if (formContext?.layout === 'inline') return { width: 'auto' }
   const w =
     props.labelWidth ??
     props.schema?.labelWidth ??
@@ -60,12 +62,19 @@ const itemClasses = computed(() => {
     'd-form-item--label-top': pos === 'top',
     'd-form-item--label-left': pos === 'left',
     'd-form-item--label-right': pos === 'right',
+    'd-form-item--inline': formContext?.layout === 'inline',
   }
+})
+
+const itemStyle = computed(() => {
+  if (props.gridSpan === -1) return { gridColumn: '1 / -1' }
+  if (props.gridSpan && props.gridSpan > 0) return { gridColumn: `span ${props.gridSpan}` }
+  return {}
 })
 </script>
 
 <template>
-  <div :class="itemClasses">
+  <div :class="itemClasses" :style="itemStyle">
     <div
       class="d-form-item__label-wrap"
       :style="displayLabel && labelPosition !== 'top' ? labelStyle : {}"
@@ -73,16 +82,18 @@ const itemClasses = computed(() => {
       <label
         v-if="displayLabel"
         class="d-form-item__label"
+        :style="displayLabel && labelPosition !== 'top' ? labelStyle : {}"
         :class="{ 'is-required': isRequired && showRequiredAsterisk }"
       >
         {{ displayLabel }}{{ showColon ? ':' : '' }}
+        <span v-if="isRequired && showRequiredAsterisk" class="d-form-item__required">*</span>
       </label>
     </div>
     <div class="d-form-item__control">
       <slot>
         <DField :name="name" :schema="schema" :component="component" :disabled="disabled" />
       </slot>
-      <div class="d-form-item__error">{{ error }}</div>
+      <div v-if="error" class="d-form-item__error">{{ error }}</div>
       <div v-if="displayDescription" class="d-form-item__description">
         {{ displayDescription }}
       </div>
@@ -142,6 +153,12 @@ const itemClasses = computed(() => {
   margin-right: 8px;
 }
 
+.d-form-item--inline {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 16px;
+}
+
 .d-form-item__control {
   position: relative;
   display: flex;
@@ -151,17 +168,13 @@ const itemClasses = computed(() => {
 }
 
 .d-form-item__error {
-  position: absolute;
-  top: 100%;
-  left: 0;
   color: red;
   font-size: 12px;
   line-height: 18px;
-  visibility: hidden;
 }
 
-.d-form-item__error:not(:empty) {
-  visibility: visible;
+.d-form-item__required {
+  color: red;
 }
 
 .d-form-item__description {

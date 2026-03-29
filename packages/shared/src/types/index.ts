@@ -13,6 +13,9 @@ export type {
   FormEventHandler,
 } from './form'
 
+// Grid types
+export type { GridConfig } from './grid'
+
 // Field types
 export type { FieldType, FieldSchema, FieldState, FieldMeta, FieldInstance } from './field'
 

@@ -1,4 +1,6 @@
 export * from '@d-form/shared'
+export { resolveLayoutConfig } from './layout'
+export type { LayoutConfig } from './layout'
 export * from './expression'
 export * from './models'
 export * from './reactive'

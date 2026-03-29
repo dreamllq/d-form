@@ -10,6 +10,8 @@ const props = defineProps<{
   onSubmit?: (values: any) => Promise<void> | void
   labelPosition?: 'left' | 'right' | 'top'
   labelWidth?: string | number
+  layout?: 'horizontal' | 'vertical' | 'inline'
+  gutter?: number
 }>()
 
 const form = useForm({
@@ -20,11 +22,32 @@ const form = useForm({
 
 const formContext = createFormContext()
 
+const effectiveLayout = computed(() => props.layout ?? props.schema?.uiSchema?.layout)
+
+const effectiveGutter = computed(() => props.gutter ?? props.schema?.uiSchema?.gutter)
+
+const formClasses = computed(() => {
+  const classes: Record<string, boolean> = {}
+  if (effectiveLayout.value) {
+    classes[`d-form--${effectiveLayout.value}`] = true
+  }
+  return classes
+})
+
+const formStyles = computed(() => {
+  if (effectiveGutter.value != null) {
+    return { gap: `${effectiveGutter.value}px` }
+  }
+  return {}
+})
+
 const context = reactive({
   schema: computed(() => props.schema),
   uiSchema: computed(() => props.schema?.uiSchema),
   labelPosition: computed(() => props.labelPosition),
   labelWidth: computed(() => props.labelWidth),
+  layout: effectiveLayout,
+  gutter: effectiveGutter,
 })
 
 provide('d-form', {
@@ -62,11 +85,13 @@ defineExpose({
   getComponent: formContext.getComponent,
   hasComponent: formContext.hasComponent,
   registerComponent: formContext.registerComponent,
+  layout: effectiveLayout,
+  gutter: effectiveGutter,
 })
 </script>
 
 <template>
-  <form @submit.prevent="handleSubmit">
+  <form :class="formClasses" :style="formStyles" @submit.prevent="handleSubmit">
     <slot />
   </form>
 </template>

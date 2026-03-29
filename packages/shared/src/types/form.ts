@@ -3,6 +3,7 @@
  */
 
 import type { FieldSchema, FieldState } from './field'
+import type { GridConfig } from './grid'
 import type { ReactionSchema } from './reaction'
 import type { FormValidationResult } from './validation'
 
@@ -23,6 +24,10 @@ export interface UISchema {
   colon?: boolean
   /** Show required asterisk */
   showRequiredAsterisk?: boolean
+  /** Grid layout configuration */
+  grid?: GridConfig
+  /** Minimum number of columns */
+  minColumns?: number
 }
 
 export interface FormSchema<T = Record<string, any>> {
