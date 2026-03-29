@@ -21,16 +21,16 @@ describe('resolveLayoutConfig', () => {
   it('later source overrides earlier source', () => {
     const result = resolveLayoutConfig([
       { layout: 'vertical', labelWidth: 80 },
-      { layout: 'horizontal' },
+      { layout: 'inline' },
     ])
-    expect(result.layout).toBe('horizontal')
+    expect(result.layout).toBe('inline')
     expect(result.labelWidth).toBe(80)
   })
 
   it('applies defaults for missing fields', () => {
-    const result = resolveLayoutConfig([{ labelWidth: 100 }], { layout: 'horizontal', colon: true })
+    const result = resolveLayoutConfig([{ labelWidth: 100 }], { layout: 'vertical', colon: true })
     expect(result).toEqual({
-      layout: 'horizontal',
+      layout: 'vertical',
       colon: true,
       labelWidth: 100,
     })

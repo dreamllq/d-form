@@ -60,7 +60,7 @@ describe('UISchema grid field', () => {
 
   it('grid is optional', () => {
     const ui: UISchema = {
-      layout: 'horizontal',
+      layout: 'vertical',
       labelWidth: '100px',
     }
     expect(acceptUISchema(ui).grid).toBeUndefined()
@@ -68,7 +68,7 @@ describe('UISchema grid field', () => {
 
   it('accepts grid alongside existing fields', () => {
     const ui: UISchema = {
-      layout: 'horizontal',
+      layout: 'vertical',
       columns: 3,
       labelWidth: '120px',
       gutter: 16,
@@ -80,7 +80,7 @@ describe('UISchema grid field', () => {
       },
       minColumns: 2,
     }
-    expect(ui.layout).toBe('horizontal')
+    expect(ui.layout).toBe('vertical')
     expect(ui.columns).toBe(3)
     expect(ui.grid?.maxColumns).toBe(6)
     expect(ui.minColumns).toBe(2)

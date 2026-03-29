@@ -9,7 +9,7 @@ import type { FormValidationResult } from './validation'
 
 export interface UISchema {
   /** Form layout direction */
-  layout?: 'horizontal' | 'vertical' | 'inline'
+  layout?: 'vertical' | 'inline'
   /** Label width (e.g., '100px', 100) */
   labelWidth?: string | number
   /** Gutter between fields */

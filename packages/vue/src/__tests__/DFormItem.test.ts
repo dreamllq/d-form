@@ -497,26 +497,6 @@ describe('DFormItem gridSpan and inline mode', () => {
     expect(item.attributes('style')).toBeUndefined()
   })
 
-  it('applies d-form-item--inline class when layout is inline', () => {
-    const wrapper = mountWithDFormProps(
-      'name',
-      { type: 'string', title: 'Name' },
-      { layout: 'inline' }
-    )
-    const item = wrapper.find('.d-form-item')
-    expect(item.classes()).toContain('d-form-item--inline')
-  })
-
-  it('sets labelWidth to auto in inline mode', () => {
-    const wrapper = mountWithDFormProps(
-      'name',
-      { type: 'string', title: 'Name' },
-      { layout: 'inline', labelWidth: 200 }
-    )
-    const label = wrapper.find('.d-form-item__label')
-    expect(label.attributes('style')).toContain('width: auto')
-  })
-
   it('does not apply inline class when layout is not inline', () => {
     const wrapper = mountWithDFormProps('name', { type: 'string', title: 'Name' })
     const item = wrapper.find('.d-form-item')

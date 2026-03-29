@@ -10,7 +10,7 @@ const props = defineProps<{
   onSubmit?: (values: any) => Promise<void> | void
   labelPosition?: 'left' | 'right' | 'top'
   labelWidth?: string | number
-  layout?: 'horizontal' | 'vertical' | 'inline'
+  layout?: 'vertical' | 'inline'
   gutter?: number
 }>()
 
@@ -100,12 +100,6 @@ defineExpose({
 .d-form--vertical {
   display: flex;
   flex-direction: column;
-}
-
-.d-form--horizontal {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
 }
 
 .d-form--inline {

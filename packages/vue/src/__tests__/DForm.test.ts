@@ -10,7 +10,6 @@ describe('DForm layout mode', () => {
     const wrapper = mount(DForm)
     const form = wrapper.find('form')
     expect(form.classes()).not.toContain('d-form--vertical')
-    expect(form.classes()).not.toContain('d-form--horizontal')
     expect(form.classes()).not.toContain('d-form--inline')
   })
 
@@ -20,14 +19,6 @@ describe('DForm layout mode', () => {
     })
     const form = wrapper.find('form')
     expect(form.classes()).toContain('d-form--vertical')
-  })
-
-  it('applies d-form--horizontal class when layout is horizontal', () => {
-    const wrapper = mount(DForm, {
-      props: { layout: 'horizontal' },
-    })
-    const form = wrapper.find('form')
-    expect(form.classes()).toContain('d-form--horizontal')
   })
 
   it('applies d-form--inline class when layout is inline', () => {

@@ -1,5 +1,5 @@
 export interface LayoutConfig {
-  layout?: 'horizontal' | 'vertical' | 'inline'
+  layout?: 'vertical' | 'inline'
   labelPosition?: 'left' | 'right' | 'top'
   labelWidth?: string | number
   gutter?: number

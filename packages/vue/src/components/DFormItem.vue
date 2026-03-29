@@ -34,23 +34,17 @@ const showRequiredAsterisk = computed(() => uiSchema?.showRequiredAsterisk !== f
 
 const displayDescription = computed(() => props.schema?.description)
 
-const layoutDefaultLabelPosition = computed(() => {
-  if (formContext?.layout === 'vertical') return 'top'
-  return 'right'
-})
-
-const labelPosition = computed(() => {
+const effectiveLabelPosition = computed(() => {
   return (
     props.labelPosition ??
     props.schema?.labelPosition ??
     formContext?.labelPosition ??
     uiSchema?.labelPosition ??
-    layoutDefaultLabelPosition.value
+    'right'
   )
 })
 const showColon = computed(() => uiSchema?.colon ?? false)
 const labelStyle = computed(() => {
-  if (formContext?.layout === 'inline') return { width: 'auto' }
   const w =
     props.labelWidth ??
     props.schema?.labelWidth ??
@@ -61,13 +55,12 @@ const labelStyle = computed(() => {
 })
 
 const itemClasses = computed(() => {
-  const pos = labelPosition.value
+  const pos = effectiveLabelPosition.value
   return {
     'd-form-item': true,
     'd-form-item--label-top': pos === 'top',
     'd-form-item--label-left': pos === 'left',
     'd-form-item--label-right': pos === 'right',
-    'd-form-item--inline': formContext?.layout === 'inline',
   }
 })
 
@@ -82,12 +75,12 @@ const itemStyle = computed(() => {
   <div :class="itemClasses" :style="itemStyle">
     <div
       class="d-form-item__label-wrap"
-      :style="displayLabel && labelPosition !== 'top' ? labelStyle : {}"
+      :style="displayLabel && effectiveLabelPosition !== 'top' ? labelStyle : {}"
     >
       <label
         v-if="displayLabel"
         class="d-form-item__label"
-        :style="displayLabel && labelPosition !== 'top' ? labelStyle : {}"
+        :style="displayLabel && effectiveLabelPosition !== 'top' ? labelStyle : {}"
         :class="{ 'is-required': isRequired && showRequiredAsterisk }"
       >
         {{ displayLabel }}{{ showColon ? ':' : '' }}
@@ -156,12 +149,6 @@ const itemStyle = computed(() => {
 .d-form-item--label-right .d-form-item__label {
   text-align: right;
   margin-right: 8px;
-}
-
-.d-form-item--inline {
-  display: inline-flex;
-  align-items: center;
-  margin-right: 16px;
 }
 
 .d-form-item__control {

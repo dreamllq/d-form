@@ -6,98 +6,125 @@
     <!-- Section 1: Layout Modes -->
     <h3 class="section-title">Layout Modes</h3>
     <p class="section-desc">
-      <code>&lt;DForm&gt;</code> supports <code>layout</code> prop: <code>vertical</code>,
-      <code>horizontal</code>, and <code>inline</code>.
+      <code>&lt;DForm&gt;</code> supports <code>layout</code> prop: <code>vertical</code> (fields
+      stacked) and <code>inline</code> (fields in a row). Layout controls
+      <strong>item arrangement only</strong> — it does not affect label position.
     </p>
-    <div class="forms-row">
-      <div class="form-card flex-card">
-        <h4>layout="vertical"</h4>
-        <p class="mode-hint">Labels on top, fields stacked</p>
-        <DForm :schema="simpleSchema" layout="vertical" @submit="(v: any) => (result1a = v)">
-          <DFormItems />
-          <el-button type="primary" native-type="submit">Submit</el-button>
-        </DForm>
-        <div v-if="result1a" class="result-card">
-          <pre>{{ JSON.stringify(result1a, null, 2) }}</pre>
-        </div>
-      </div>
 
-      <div class="form-card flex-card">
-        <h4>layout="horizontal"</h4>
-        <p class="mode-hint">Labels beside fields, stacked vertically</p>
-        <DForm :schema="simpleSchema" layout="horizontal" @submit="(v: any) => (result1b = v)">
-          <DFormItems />
-          <el-button type="primary" native-type="submit">Submit</el-button>
-        </DForm>
-        <div v-if="result1b" class="result-card">
-          <pre>{{ JSON.stringify(result1b, null, 2) }}</pre>
-        </div>
-      </div>
-
-      <div class="form-card flex-card">
-        <h4>layout="inline"</h4>
-        <p class="mode-hint">Fields flow in a row</p>
-        <DForm :schema="simpleSchema" layout="inline" @submit="(v: any) => (result1c = v)">
-          <DFormItems />
-          <el-button type="primary" native-type="submit">Submit</el-button>
-        </DForm>
-        <div v-if="result1c" class="result-card">
-          <pre>{{ JSON.stringify(result1c, null, 2) }}</pre>
-        </div>
+    <div class="form-card">
+      <h4>layout="vertical"</h4>
+      <p class="mode-hint">
+        Fields stacked vertically, labels beside (default labelPosition: right)
+      </p>
+      <DForm :schema="simpleSchema" layout="vertical" @submit="(v: any) => (result1a = v)">
+        <DFormItems />
+        <el-button type="primary" native-type="submit">Submit</el-button>
+      </DForm>
+      <div v-if="result1a" class="result-card">
+        <pre>{{ JSON.stringify(result1a, null, 2) }}</pre>
       </div>
     </div>
 
-    <!-- Section 2: Grid Layout -->
+    <div class="form-card">
+      <h4>layout="inline"</h4>
+      <p class="mode-hint">Fields flow in a row, labels beside each field</p>
+      <DForm :schema="simpleSchema" layout="inline" @submit="(v: any) => (result1b = v)">
+        <DFormItems />
+        <el-button type="primary" native-type="submit">Submit</el-button>
+      </DForm>
+      <div v-if="result1b" class="result-card">
+        <pre>{{ JSON.stringify(result1b, null, 2) }}</pre>
+      </div>
+    </div>
+
+    <!-- Section 2: Label Position (independent of layout) -->
+    <h3 class="section-title">labelPosition (independent of layout)</h3>
+    <p class="section-desc">
+      <code>labelPosition</code> controls where labels appear relative to their field. It works
+      <strong>independently</strong> of <code>layout</code>.
+    </p>
+
+    <div class="form-card">
+      <h4>labelPosition: top (no layout prop)</h4>
+      <p class="mode-hint">Labels on top of fields, fields stacked vertically</p>
+      <DForm :schema="simpleSchema" label-position="top" @submit="(v: any) => (result2a = v)">
+        <DFormItems />
+        <el-button type="primary" native-type="submit">Submit</el-button>
+      </DForm>
+      <div v-if="result2a" class="result-card">
+        <pre>{{ JSON.stringify(result2a, null, 2) }}</pre>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h4>labelPosition: top + layout="inline"</h4>
+      <p class="mode-hint">
+        Fields flow in a row but labels are on top — layout and labelPosition are independent
+      </p>
+      <DForm
+        :schema="simpleSchema"
+        layout="inline"
+        label-position="top"
+        @submit="(v: any) => (result2b = v)"
+      >
+        <DFormItems />
+        <el-button type="primary" native-type="submit">Submit</el-button>
+      </DForm>
+      <div v-if="result2b" class="result-card">
+        <pre>{{ JSON.stringify(result2b, null, 2) }}</pre>
+      </div>
+    </div>
+
+    <!-- Section 3: Grid Layout -->
     <h3 class="section-title">Grid Layout (DFormGrid)</h3>
     <p class="section-desc">
       <code>&lt;DFormGrid&gt;</code> provides responsive CSS grid. Use <code>maxColumns</code> to
       control column count.
     </p>
-    <div class="forms-row">
-      <div class="form-card flex-card">
-        <h4>maxColumns: 2</h4>
-        <DForm :schema="gridSchema">
-          <DFormGrid :max-columns="2" :min-column-width="120">
-            <DFormItem
-              v-for="(field, key) in gridSchema.properties"
-              :key="key"
-              :name="String(key)"
-              :schema="field"
-            />
-          </DFormGrid>
-        </DForm>
-      </div>
 
-      <div class="form-card flex-card">
-        <h4>maxColumns: 3</h4>
-        <DForm :schema="gridSchema">
-          <DFormGrid :max-columns="3" :min-column-width="120">
-            <DFormItem
-              v-for="(field, key) in gridSchema.properties"
-              :key="key"
-              :name="String(key)"
-              :schema="field"
-            />
-          </DFormGrid>
-        </DForm>
-      </div>
-
-      <div class="form-card flex-card">
-        <h4>maxColumns: 4</h4>
-        <DForm :schema="gridSchema">
-          <DFormGrid :max-columns="4" :min-column-width="100">
-            <DFormItem
-              v-for="(field, key) in gridSchema.properties"
-              :key="key"
-              :name="String(key)"
-              :schema="field"
-            />
-          </DFormGrid>
-        </DForm>
-      </div>
+    <div class="form-card">
+      <h4>maxColumns: 2</h4>
+      <DForm :schema="gridSchema">
+        <DFormGrid :max-columns="2" :min-column-width="120">
+          <DFormItem
+            v-for="(field, key) in gridSchema.properties"
+            :key="key"
+            :name="String(key)"
+            :schema="field"
+          />
+        </DFormGrid>
+      </DForm>
     </div>
 
-    <!-- Section 3: Grid + Span -->
+    <div class="form-card">
+      <h4>maxColumns: 3</h4>
+      <DForm :schema="gridSchema">
+        <DFormGrid :max-columns="3" :min-column-width="120">
+          <DFormItem
+            v-for="(field, key) in gridSchema.properties"
+            :key="key"
+            :name="String(key)"
+            :schema="field"
+          />
+        </DFormGrid>
+      </DForm>
+    </div>
+
+    <div class="form-card">
+      <h4>maxColumns: 4</h4>
+      <DForm :schema="gridSchema">
+        <DFormGrid :max-columns="4" :min-column-width="100">
+          <DFormItem
+            v-for="(field, key) in gridSchema.properties"
+            :key="key"
+            :name="String(key)"
+            :schema="field"
+          />
+        </DFormGrid>
+      </DForm>
+    </div>
+
+    <!-- Section 4: Grid + Span -->
     <h3 class="section-title">Grid + Span (gridSpan)</h3>
     <p class="section-desc">
       <code>&lt;DFormItem&gt;</code> accepts <code>gridSpan</code> prop: <code>1</code> (default),
@@ -122,56 +149,50 @@
       </p>
     </div>
 
-    <!-- Section 4: Gutter -->
+    <!-- Section 5: Gutter -->
     <h3 class="section-title">Gutter Spacing</h3>
     <p class="section-desc">
       <code>&lt;DForm&gt;</code> accepts <code>gutter</code> prop to control field spacing (CSS gap
       in px).
     </p>
-    <div class="forms-row">
-      <div class="form-card flex-card">
-        <h4>gutter: 8</h4>
-        <DForm :schema="simpleSchema" :gutter="8" @submit="(v: any) => (result4a = v)">
-          <DFormItems />
-          <el-button type="primary" native-type="submit">Submit</el-button>
-        </DForm>
-        <div v-if="result4a" class="result-card">
-          <pre>{{ JSON.stringify(result4a, null, 2) }}</pre>
-        </div>
-      </div>
 
-      <div class="form-card flex-card">
-        <h4>gutter: 24</h4>
-        <DForm :schema="simpleSchema" :gutter="24" @submit="(v: any) => (result4b = v)">
-          <DFormItems />
-          <el-button type="primary" native-type="submit">Submit</el-button>
-        </DForm>
-        <div v-if="result4b" class="result-card">
-          <pre>{{ JSON.stringify(result4b, null, 2) }}</pre>
-        </div>
+    <div class="form-card">
+      <h4>gutter: 8</h4>
+      <DForm :schema="simpleSchema" :gutter="8" @submit="(v: any) => (result5a = v)">
+        <DFormItems />
+        <el-button type="primary" native-type="submit">Submit</el-button>
+      </DForm>
+      <div v-if="result5a" class="result-card">
+        <pre>{{ JSON.stringify(result5a, null, 2) }}</pre>
       </div>
     </div>
 
-    <!-- Section 5: Combined — Schema-driven grid -->
+    <div class="form-card">
+      <h4>gutter: 24</h4>
+      <DForm :schema="simpleSchema" :gutter="24" @submit="(v: any) => (result5b = v)">
+        <DFormItems />
+        <el-button type="primary" native-type="submit">Submit</el-button>
+      </DForm>
+      <div v-if="result5b" class="result-card">
+        <pre>{{ JSON.stringify(result5b, null, 2) }}</pre>
+      </div>
+    </div>
+
+    <!-- Section 6: Combined — Schema-driven grid -->
     <h3 class="section-title">Combined: Schema-driven Grid</h3>
     <p class="section-desc">
       <code>DFormItems</code> auto-wraps in <code>DFormGrid</code> when
-      <code>uiSchema.grid</code> is set. Full integration with layout + grid + gutter.
+      <code>uiSchema.grid</code> is set. Full integration with grid + gutter.
     </p>
     <div class="form-card">
-      <DForm
-        :schema="combinedSchema"
-        layout="horizontal"
-        :gutter="12"
-        @submit="(v: any) => (result5 = v)"
-      >
+      <DForm :schema="combinedSchema" :gutter="12" @submit="(v: any) => (result6 = v)">
         <DFormItems />
         <el-button type="primary" native-type="submit">Submit</el-button>
       </DForm>
     </div>
-    <div v-if="result5" class="result-card">
+    <div v-if="result6" class="result-card">
       <h3>Submitted Values</h3>
-      <pre>{{ JSON.stringify(result5, null, 2) }}</pre>
+      <pre>{{ JSON.stringify(result6, null, 2) }}</pre>
     </div>
   </div>
 </template>
@@ -232,10 +253,11 @@ const combinedSchema: FormSchema = {
 
 const result1a = ref<Record<string, any> | null>(null)
 const result1b = ref<Record<string, any> | null>(null)
-const result1c = ref<Record<string, any> | null>(null)
-const result4a = ref<Record<string, any> | null>(null)
-const result4b = ref<Record<string, any> | null>(null)
-const result5 = ref<Record<string, any> | null>(null)
+const result2a = ref<Record<string, any> | null>(null)
+const result2b = ref<Record<string, any> | null>(null)
+const result5a = ref<Record<string, any> | null>(null)
+const result5b = ref<Record<string, any> | null>(null)
+const result6 = ref<Record<string, any> | null>(null)
 </script>
 
 <style scoped>
@@ -272,16 +294,14 @@ const result5 = ref<Record<string, any> | null>(null)
   font-size: 12px;
   color: #606266;
 }
-.forms-row {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
+.form-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  margin-bottom: 16px;
 }
-.flex-card {
-  flex: 1;
-  min-width: 260px;
-}
-.flex-card h4 {
+.form-card h4 {
   font-size: 13px;
   color: #909399;
   margin-bottom: 4px;
@@ -291,12 +311,6 @@ const result5 = ref<Record<string, any> | null>(null)
   font-size: 12px;
   color: #b0b3b8;
   margin-bottom: 12px;
-}
-.form-card {
-  background: #fff;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 .result-card {
   margin-top: 20px;
