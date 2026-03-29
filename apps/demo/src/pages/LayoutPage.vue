@@ -53,38 +53,44 @@
     <div class="forms-row">
       <div class="form-card flex-card">
         <h4>maxColumns: 2</h4>
-        <DFormGrid :max-columns="2" :min-column-width="120">
-          <DFormItem
-            v-for="(field, key) in gridSchema.properties"
-            :key="key"
-            :name="String(key)"
-            :schema="field"
-          />
-        </DFormGrid>
+        <DForm :schema="gridSchema">
+          <DFormGrid :max-columns="2" :min-column-width="120">
+            <DFormItem
+              v-for="(field, key) in gridSchema.properties"
+              :key="key"
+              :name="String(key)"
+              :schema="field"
+            />
+          </DFormGrid>
+        </DForm>
       </div>
 
       <div class="form-card flex-card">
         <h4>maxColumns: 3</h4>
-        <DFormGrid :max-columns="3" :min-column-width="120">
-          <DFormItem
-            v-for="(field, key) in gridSchema.properties"
-            :key="key"
-            :name="String(key)"
-            :schema="field"
-          />
-        </DFormGrid>
+        <DForm :schema="gridSchema">
+          <DFormGrid :max-columns="3" :min-column-width="120">
+            <DFormItem
+              v-for="(field, key) in gridSchema.properties"
+              :key="key"
+              :name="String(key)"
+              :schema="field"
+            />
+          </DFormGrid>
+        </DForm>
       </div>
 
       <div class="form-card flex-card">
         <h4>maxColumns: 4</h4>
-        <DFormGrid :max-columns="4" :min-column-width="100">
-          <DFormItem
-            v-for="(field, key) in gridSchema.properties"
-            :key="key"
-            :name="String(key)"
-            :schema="field"
-          />
-        </DFormGrid>
+        <DForm :schema="gridSchema">
+          <DFormGrid :max-columns="4" :min-column-width="100">
+            <DFormItem
+              v-for="(field, key) in gridSchema.properties"
+              :key="key"
+              :name="String(key)"
+              :schema="field"
+            />
+          </DFormGrid>
+        </DForm>
       </div>
     </div>
 
@@ -95,16 +101,18 @@
       <code>2+</code> (multi-column), <code>-1</code> (full width).
     </p>
     <div class="form-card">
-      <DFormGrid :max-columns="3" :min-column-width="120" :column-gap="16">
-        <DFormItem name="firstName" :schema="spanSchema.properties.firstName" />
-        <DFormItem name="lastName" :schema="spanSchema.properties.lastName" />
-        <DFormItem name="email" :schema="spanSchema.properties.email" :grid-span="2" />
-        <DFormItem name="phone" :schema="spanSchema.properties.phone" />
-        <DFormItem name="address" :schema="spanSchema.properties.address" :grid-span="-1" />
-        <DFormItem name="city" :schema="spanSchema.properties.city" />
-        <DFormItem name="state" :schema="spanSchema.properties.state" />
-        <DFormItem name="zip" :schema="spanSchema.properties.zip" />
-      </DFormGrid>
+      <DForm :schema="spanSchema">
+        <DFormGrid :max-columns="3" :min-column-width="120" :column-gap="16">
+          <DFormItem name="firstName" :schema="spanSchema.properties.firstName" />
+          <DFormItem name="lastName" :schema="spanSchema.properties.lastName" />
+          <DFormItem name="email" :schema="spanSchema.properties.email" :grid-span="2" />
+          <DFormItem name="phone" :schema="spanSchema.properties.phone" />
+          <DFormItem name="address" :schema="spanSchema.properties.address" :grid-span="-1" />
+          <DFormItem name="city" :schema="spanSchema.properties.city" />
+          <DFormItem name="state" :schema="spanSchema.properties.state" />
+          <DFormItem name="zip" :schema="spanSchema.properties.zip" />
+        </DFormGrid>
+      </DForm>
       <p class="span-legend">
         firstName=1 | lastName=1 | email=<strong>2</strong> | phone=1 | address=<strong>-1</strong>
         (full) | city=1 | state=1 | zip=1
