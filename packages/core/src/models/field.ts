@@ -29,7 +29,7 @@ function filterRulesByTrigger(
 
 type Form = import('./form').Form
 
-type FieldEvent = 'valueChange' | 'touchedChange' | 'stateChange'
+type FieldEvent = 'valueChange' | 'touchedChange' | 'stateChange' | 'schemaChange'
 
 export class Field {
   private _form: Form
@@ -99,6 +99,13 @@ export class Field {
 
   getError(): string | undefined {
     return this._state.error
+  }
+
+  updateSchema(partial: Partial<FieldSchema>): void {
+    if (!this.meta.schema) return
+    // Create a new object so Vue's reference-based change detection triggers re-renders
+    this.meta.schema = { ...this.meta.schema, ...partial }
+    this._emit('schemaChange', this.meta.schema)
   }
 
   setError(error: string | undefined): void {

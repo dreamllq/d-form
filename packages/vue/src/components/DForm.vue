@@ -42,7 +42,7 @@ const formStyles = computed(() => {
   return {}
 })
 
-const context = reactive({
+const providedContext = reactive({
   schema: computed(() => props.schema),
   uiSchema: computed(() => props.schema?.uiSchema),
   labelPosition: computed(() => props.labelPosition),
@@ -54,7 +54,7 @@ const context = reactive({
 provide('d-form', {
   ...form,
   ...formContext,
-  ...context,
+  ...providedContext,
 })
 
 const handleSubmit = async () => {

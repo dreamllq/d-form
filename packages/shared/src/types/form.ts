@@ -48,6 +48,11 @@ export const FormSchema = z.object({
   description: z.string().optional(),
   /** Default form values */
   default: z.record(z.string(), z.any()).optional(),
+  /**
+   * Expression scope — variables available inside {{}} expressions.
+   * e.g. `{ cityMap }` lets reactions reference `{{cityMap[$deps[0]]}}`
+   */
+  scope: z.record(z.string(), z.any()).optional(),
 })
 
 /**

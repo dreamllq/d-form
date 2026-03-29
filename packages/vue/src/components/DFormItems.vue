@@ -6,15 +6,22 @@ import type { FieldSchema, FormSchema, GridConfig } from '@d-form/shared'
 
 const formContext = inject<any>('d-form')
 const schema = computed(() => formContext?.schema as FormSchema | undefined)
+// Depend on schemaVersion so computed re-evaluates when reactions mutate field schemas
+const schemaVersion = computed(() => formContext?.schemaVersion?.value ?? 0)
 
 const fields = computed(() => {
+  // Touch schemaVersion to establish reactive dependency
+  void schemaVersion.value
+
   const properties = schema.value?.properties
   if (!properties) return {}
   // Filter out void type fields (non-data fields like dividers)
   const filtered: Record<string, FieldSchema> = {}
   for (const [key, fieldSchema] of Object.entries(properties)) {
     if (fieldSchema.type !== 'void') {
-      filtered[key] = fieldSchema
+      // Prefer live schema from field instance (may have been mutated by reactions)
+      const field = formContext?.form?.getField(key)
+      filtered[key] = (field?.meta?.schema as FieldSchema) || fieldSchema
     }
   }
   return filtered

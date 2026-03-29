@@ -33,6 +33,8 @@ export interface UseFormReturn<T extends object = Record<string, any>> {
   submitted: Ref<boolean>
   /** Reactive submit count */
   submitCount: Ref<number>
+  /** Schema change version — increments when any field schema is mutated by a reaction */
+  schemaVersion: Ref<number>
   /** Set a field value */
   setFieldValue: (path: string, value: any) => void
   /** Set multiple field values */
@@ -89,6 +91,19 @@ export function useForm<T extends object = Record<string, any>>(
   const validating = ref(form.getState().validating)
   const submitted = ref(form.getState().submitted)
   const submitCount = ref(form.getState().submitCount)
+  const schemaVersion = ref(0)
+
+  // Subscribe to schema changes from all fields (triggered by reactions)
+  const schemaUnsubscribers: (() => void)[] = []
+  for (const name of form.getFieldNames()) {
+    const field = form.getField(name)
+    if (field) {
+      const unsub = field.on('schemaChange', () => {
+        schemaVersion.value++
+      })
+      schemaUnsubscribers.push(unsub)
+    }
+  }
 
   const syncState = () => {
     const state = form.getState()
@@ -186,7 +201,8 @@ export function useForm<T extends object = Record<string, any>>(
 
   if (getCurrentInstance()) {
     onUnmounted(() => {
-      // Cleanup if needed
+      schemaUnsubscribers.forEach((unsub) => unsub())
+      form.dispose()
     })
   }
 
@@ -201,6 +217,7 @@ export function useForm<T extends object = Record<string, any>>(
     validating,
     submitted,
     submitCount,
+    schemaVersion,
     setFieldValue,
     setValues,
     setFieldTouched,

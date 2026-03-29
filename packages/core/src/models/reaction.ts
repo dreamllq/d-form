@@ -22,7 +22,7 @@ export class Reaction {
   private _checkCircularDependencies(): void {
     const targets = this.getTargets()
     const deps = this.config.dependencies || []
-    
+
     for (const target of targets) {
       if (deps.includes(target)) {
         throw new Error(
@@ -30,11 +30,9 @@ export class Reaction {
         )
       }
     }
-    
+
     if (targets.includes(this.sourceField) && deps.includes(this.sourceField)) {
-      throw new Error(
-        `Circular dependency detected: field "${this.sourceField}" depends on itself`
-      )
+      throw new Error(`Circular dependency detected: field "${this.sourceField}" depends on itself`)
     }
   }
 
@@ -48,13 +46,13 @@ export class Reaction {
         }
       }
     }
-    
+
     const source = this.form.getField(this.sourceField)
     if (source) {
       const unsub = source.on('valueChange', () => this.run())
       this.unsubscribers.push(unsub)
     }
-    
+
     // Run initial reaction when there's conditional logic (when + otherwise/fulfill)
     // This ensures initial state is applied based on current field values
     if (this.config.when !== undefined) {
@@ -67,7 +65,7 @@ export class Reaction {
 
     const scope = this.createScope()
     const shouldFulfill = this.evaluateCondition(scope)
-    
+
     if (shouldFulfill) {
       this.applyEffect(this.config.fulfill, scope)
     } else if (this.config.otherwise) {
@@ -80,31 +78,34 @@ export class Reaction {
     const $self = sourceField?.getState() || {}
     const $values = this.form.getValues()
     const $form = this.form
-    
-    const $deps = this.config.dependencies?.map(dep => 
-      this.form.getFieldValue(dep)
-    ) || []
 
-    return { 
-      $self, 
-      $values, 
-      $form, 
+    const $deps = this.config.dependencies?.map((dep) => this.form.getFieldValue(dep)) || []
+
+    return {
+      $self,
+      $values,
+      $form,
       $deps,
-      $dependencies: this.config.dependencies?.reduce((acc, dep) => {
-        acc[dep] = this.form.getFieldValue(dep)
-        return acc
-      }, {} as Record<string, any>) || {}
+      $dependencies:
+        this.config.dependencies?.reduce(
+          (acc, dep) => {
+            acc[dep] = this.form.getFieldValue(dep)
+            return acc
+          },
+          {} as Record<string, any>
+        ) || {},
+      ...this.form.getContext(),
     }
   }
 
   private evaluateCondition(scope: Record<string, any>): boolean {
     if (!this.config.when) return true
-    
+
     if (isExpression(this.config.when)) {
       const result = compile(this.config.when, scope)
       return Boolean(result)
     }
-    
+
     return Boolean(this.config.when)
   }
 
@@ -112,7 +113,7 @@ export class Reaction {
     if (!effect) return
 
     const targets = this.getTargets()
-    
+
     for (const targetPath of targets) {
       const field = this.form.getField(targetPath)
       if (!field) continue
@@ -127,7 +128,8 @@ export class Reaction {
       }
 
       if (effect.schema && field.meta.schema) {
-        Object.assign(field.meta.schema, effect.schema)
+        const resolved = this.resolveSchema(effect.schema, scope)
+        field.updateSchema(resolved)
       }
 
       if (effect.run) {
@@ -138,9 +140,7 @@ export class Reaction {
 
   private getTargets(): string[] {
     if (this.config.target) {
-      return Array.isArray(this.config.target) 
-        ? this.config.target 
-        : [this.config.target]
+      return Array.isArray(this.config.target) ? this.config.target : [this.config.target]
     }
     return [this.sourceField]
   }
@@ -150,6 +150,23 @@ export class Reaction {
       return compile(value, scope)
     }
     return value
+  }
+
+  private resolveSchema(schema: any, scope: Record<string, any>): any {
+    if (typeof schema === 'string') {
+      return isExpression(schema) ? compile(schema, scope) : schema
+    }
+    if (Array.isArray(schema)) {
+      return schema.map((item) => this.resolveSchema(item, scope))
+    }
+    if (typeof schema === 'object' && schema !== null) {
+      const result: Record<string, any> = {}
+      for (const [key, value] of Object.entries(schema)) {
+        result[key] = this.resolveSchema(value, scope)
+      }
+      return result
+    }
+    return schema
   }
 
   dispose(): void {

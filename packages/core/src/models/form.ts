@@ -6,8 +6,10 @@ import type {
   FieldState,
   ValidationResult,
   FormValidationResult,
+  ReactionConfig,
 } from '@d-form/shared'
 import { Field } from './field'
+import { Reaction, createReaction } from './reaction'
 import { validateForm, validateFieldAsync } from '../validation'
 
 type AnyObject = Record<string, any>
@@ -29,6 +31,7 @@ export class Form {
   private _state: FormState<AnyObject>
   private _options: InternalFormOptions
   private _zodSchema?: any
+  private _reactions: Reaction[] = []
 
   constructor(options?: InternalFormOptions) {
     this._options = options || {}
@@ -54,7 +57,13 @@ export class Form {
 
     if (options?.schema) {
       this._registerSchemaFields(options.schema)
+      this._setupSchemaReactions(options.schema)
     }
+  }
+
+  /** Get expression scope from schema.scope */
+  getContext(): Record<string, any> {
+    return this._options.schema?.scope || {}
   }
 
   private _extractSchemaDefaults(schema?: FormSchema): AnyObject {
@@ -75,6 +84,56 @@ export class Form {
     for (const [key, fieldSchema] of Object.entries(schema.properties)) {
       this.registerField(key, fieldSchema)
     }
+  }
+
+  private _setupSchemaReactions(schema: FormSchema): void {
+    if (!schema.properties) return
+
+    // Field-level reactions
+    for (const [key, fieldSchema] of Object.entries(schema.properties)) {
+      if (fieldSchema.reactions?.length) {
+        for (const reactionConfig of fieldSchema.reactions) {
+          const reaction = this._createReactionFromConfig(key, reactionConfig)
+          if (reaction) {
+            this._reactions.push(reaction)
+          }
+        }
+      }
+    }
+
+    // Form-level reactions
+    if (schema.reactions?.length) {
+      for (const reactionSchema of schema.reactions) {
+        // Form-level reactions without a source field use first dependency as source
+        const sourceField = reactionSchema.dependencies?.[0] || ''
+        if (!sourceField) continue
+        const reaction = this._createReactionFromConfig(sourceField, reactionSchema)
+        if (reaction) {
+          this._reactions.push(reaction)
+        }
+      }
+    }
+  }
+
+  private _createReactionFromConfig(sourceField: string, config: ReactionConfig): Reaction | null {
+    // Ensure source field exists
+    if (!this._fields.has(sourceField)) {
+      this.registerField(sourceField)
+    }
+    try {
+      return createReaction(this, sourceField, config)
+    } catch (e) {
+      console.warn(`Failed to create reaction for "${sourceField}":`, e)
+      return null
+    }
+  }
+
+  /** Dispose all reactions (cleanup) */
+  dispose(): void {
+    for (const reaction of this._reactions) {
+      reaction.dispose()
+    }
+    this._reactions = []
   }
 
   getState(): FormState<AnyObject> {

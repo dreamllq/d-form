@@ -20,7 +20,7 @@ const props = defineProps<{
 const formContext = inject<any>('d-form')
 const uiSchema = formContext?.uiSchema
 
-const { error } = useField(props.name, formContext?.form, {
+const { error, visible } = useField(props.name, formContext?.form, {
   schema: props.schema,
 })
 
@@ -72,7 +72,7 @@ const itemStyle = computed(() => {
 </script>
 
 <template>
-  <div :class="itemClasses" :style="itemStyle">
+  <div v-show="visible" :class="itemClasses" :style="itemStyle">
     <div
       class="d-form-item__label-wrap"
       :style="displayLabel && effectiveLabelPosition !== 'top' ? labelStyle : {}"
