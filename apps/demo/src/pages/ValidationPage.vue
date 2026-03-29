@@ -5,11 +5,6 @@
 
     <div class="form-card">
       <DForm ref="formRef" :schema="schema" :initial-values="initialValues" @submit="handleSubmit">
-        <DFormItem name="username" :schema="schema.properties.username" />
-        <DFormItem name="email" :schema="schema.properties.email" />
-        <DFormItem name="password" :schema="schema.properties.password" />
-        <DFormItem name="age" :schema="schema.properties.age" />
-        <DFormItem name="website" :schema="schema.properties.website" />
         <div class="button-group">
           <el-button type="primary" native-type="submit">Submit</el-button>
           <el-button @click="() => formRef?.reset()">Reset</el-button>
@@ -26,7 +21,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { DForm, DFormItem } from '@d-form/vue'
+import { DForm } from '@d-form/vue'
 import type { FormSchema } from '@d-form/shared'
 import { ElButton } from 'element-plus'
 
@@ -40,8 +35,13 @@ const schema: FormSchema = {
       placeholder: 'Enter username',
       validation: {
         rules: [
-          { type: 'required', message: 'Username is required', trigger:'blur'},
-          { type: 'minLength', value: 3, message: 'Username must be at least 3 characters', trigger:'blur' },
+          { type: 'required', message: 'Username is required', trigger: 'blur' },
+          {
+            type: 'minLength',
+            value: 3,
+            message: 'Username must be at least 3 characters',
+            trigger: 'blur',
+          },
         ],
       },
     },
@@ -52,8 +52,13 @@ const schema: FormSchema = {
       placeholder: 'Enter email',
       validation: {
         rules: [
-          { type: 'required', message: 'Email is required', trigger:'change' },
-          { type: 'pattern', value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Invalid email format', trigger:'change' },
+          { type: 'required', message: 'Email is required', trigger: 'change' },
+          {
+            type: 'pattern',
+            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: 'Invalid email format',
+            trigger: 'change',
+          },
         ],
       },
     },

@@ -17,7 +17,6 @@
         Fields stacked vertically, labels beside (default labelPosition: right)
       </p>
       <DForm :schema="simpleSchema" layout="vertical" @submit="(v: any) => (result1a = v)">
-        <DFormItems />
         <el-button type="primary" native-type="submit">Submit</el-button>
       </DForm>
       <div v-if="result1a" class="result-card">
@@ -29,7 +28,6 @@
       <h4>layout="inline"</h4>
       <p class="mode-hint">Fields flow in a row, labels beside each field</p>
       <DForm :schema="simpleSchema" layout="inline" @submit="(v: any) => (result1b = v)">
-        <DFormItems />
         <el-button type="primary" native-type="submit">Submit</el-button>
       </DForm>
       <div v-if="result1b" class="result-card">
@@ -48,7 +46,6 @@
       <h4>labelPosition: top (no layout prop)</h4>
       <p class="mode-hint">Labels on top of fields, fields stacked vertically</p>
       <DForm :schema="simpleSchema" label-position="top" @submit="(v: any) => (result2a = v)">
-        <DFormItems />
         <el-button type="primary" native-type="submit">Submit</el-button>
       </DForm>
       <div v-if="result2a" class="result-card">
@@ -67,7 +64,6 @@
         label-position="top"
         @submit="(v: any) => (result2b = v)"
       >
-        <DFormItems />
         <el-button type="primary" native-type="submit">Submit</el-button>
       </DForm>
       <div v-if="result2b" class="result-card">
@@ -84,44 +80,17 @@
 
     <div class="form-card">
       <h4>maxColumns: 2</h4>
-      <DForm :schema="gridSchema">
-        <DFormGrid :max-columns="2" :min-column-width="120">
-          <DFormItem
-            v-for="(field, key) in gridSchema.properties"
-            :key="key"
-            :name="String(key)"
-            :schema="field"
-          />
-        </DFormGrid>
-      </DForm>
+      <DForm :schema="gridSchema2" />
     </div>
 
     <div class="form-card">
       <h4>maxColumns: 3</h4>
-      <DForm :schema="gridSchema">
-        <DFormGrid :max-columns="3" :min-column-width="120">
-          <DFormItem
-            v-for="(field, key) in gridSchema.properties"
-            :key="key"
-            :name="String(key)"
-            :schema="field"
-          />
-        </DFormGrid>
-      </DForm>
+      <DForm :schema="gridSchema3" />
     </div>
 
     <div class="form-card">
       <h4>maxColumns: 4</h4>
-      <DForm :schema="gridSchema">
-        <DFormGrid :max-columns="4" :min-column-width="100">
-          <DFormItem
-            v-for="(field, key) in gridSchema.properties"
-            :key="key"
-            :name="String(key)"
-            :schema="field"
-          />
-        </DFormGrid>
-      </DForm>
+      <DForm :schema="gridSchema4" />
     </div>
 
     <!-- Section 4: Grid + Span -->
@@ -131,18 +100,7 @@
       <code>2+</code> (multi-column), <code>-1</code> (full width).
     </p>
     <div class="form-card">
-      <DForm :schema="spanSchema">
-        <DFormGrid :max-columns="3" :min-column-width="120" :column-gap="16">
-          <DFormItem name="firstName" :schema="spanSchema.properties.firstName" />
-          <DFormItem name="lastName" :schema="spanSchema.properties.lastName" />
-          <DFormItem name="email" :schema="spanSchema.properties.email" :grid-span="2" />
-          <DFormItem name="phone" :schema="spanSchema.properties.phone" />
-          <DFormItem name="address" :schema="spanSchema.properties.address" :grid-span="-1" />
-          <DFormItem name="city" :schema="spanSchema.properties.city" />
-          <DFormItem name="state" :schema="spanSchema.properties.state" />
-          <DFormItem name="zip" :schema="spanSchema.properties.zip" />
-        </DFormGrid>
-      </DForm>
+      <DForm :schema="spanSchemaWithGrid" />
       <p class="span-legend">
         firstName=1 | lastName=1 | email=<strong>2</strong> | phone=1 | address=<strong>-1</strong>
         (full) | city=1 | state=1 | zip=1
@@ -159,7 +117,6 @@
     <div class="form-card">
       <h4>gutter: 8</h4>
       <DForm :schema="simpleSchema" :gutter="8" @submit="(v: any) => (result5a = v)">
-        <DFormItems />
         <el-button type="primary" native-type="submit">Submit</el-button>
       </DForm>
       <div v-if="result5a" class="result-card">
@@ -170,7 +127,6 @@
     <div class="form-card">
       <h4>gutter: 24</h4>
       <DForm :schema="simpleSchema" :gutter="24" @submit="(v: any) => (result5b = v)">
-        <DFormItems />
         <el-button type="primary" native-type="submit">Submit</el-button>
       </DForm>
       <div v-if="result5b" class="result-card">
@@ -186,7 +142,6 @@
     </p>
     <div class="form-card">
       <DForm :schema="combinedSchema" :gutter="12" @submit="(v: any) => (result6 = v)">
-        <DFormItems />
         <el-button type="primary" native-type="submit">Submit</el-button>
       </DForm>
     </div>
@@ -198,8 +153,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { DForm, DFormItem, DFormItems, DFormGrid } from '@d-form/vue'
+import { ref, computed } from 'vue'
+import { DForm } from '@d-form/vue'
 import type { FormSchema } from '@d-form/shared'
 import { ElButton } from 'element-plus'
 
@@ -248,6 +203,30 @@ const combinedSchema: FormSchema = {
   },
   uiSchema: {
     grid: { maxColumns: 3, columnGap: 16 },
+  },
+}
+
+const gridSchema2 = computed(() => ({
+  ...gridSchema,
+  uiSchema: { grid: { maxColumns: 2, minColumnWidth: 120 } },
+}))
+
+const gridSchema3 = computed(() => ({
+  ...gridSchema,
+  uiSchema: { grid: { maxColumns: 3, minColumnWidth: 120 } },
+}))
+
+const gridSchema4 = computed(() => ({
+  ...gridSchema,
+  uiSchema: { grid: { maxColumns: 4, minColumnWidth: 100 } },
+}))
+
+const spanSchemaWithGrid: FormSchema = {
+  ...spanSchema,
+  uiSchema: {
+    grid: { maxColumns: 3, minColumnWidth: 120, columnGap: 16 },
+    email: { gridSpan: 2 },
+    address: { gridSpan: -1 },
   },
 }
 

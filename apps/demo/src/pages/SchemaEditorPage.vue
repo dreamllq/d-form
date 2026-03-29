@@ -24,12 +24,6 @@
             :initial-values="liveInitialValues"
             @submit="handlePreviewSubmit"
           >
-            <DFormItem
-              v-for="(_, key) in liveSchema.properties"
-              :key="key"
-              :name="String(key)"
-              :schema="liveSchema.properties[key as string]"
-            />
             <el-button type="primary" native-type="submit" size="small">Submit</el-button>
           </DForm>
           <div v-else class="empty-state">Edit and apply a schema to see the preview</div>
@@ -46,7 +40,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { DForm, DFormItem } from '@d-form/vue'
+import { DForm } from '@d-form/vue'
 import type { FormSchema } from '@d-form/shared'
 import { ElButton } from 'element-plus'
 

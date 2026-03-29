@@ -15,8 +15,6 @@
       <div class="form-card flex-card">
         <h4>labelPosition="left"</h4>
         <DForm :schema="simpleSchema" label-position="left" @submit="(v: any) => (result1a = v)">
-          <DFormItem name="name" :schema="simpleSchema.properties.name" />
-          <DFormItem name="email" :schema="simpleSchema.properties.email" />
           <el-button type="primary" native-type="submit">Submit</el-button>
         </DForm>
         <div v-if="result1a" class="result-card">
@@ -27,8 +25,6 @@
       <div class="form-card flex-card">
         <h4>labelPosition="right"</h4>
         <DForm :schema="simpleSchema" label-position="right" @submit="(v: any) => (result1b = v)">
-          <DFormItem name="name" :schema="simpleSchema.properties.name" />
-          <DFormItem name="email" :schema="simpleSchema.properties.email" />
           <el-button type="primary" native-type="submit">Submit</el-button>
         </DForm>
         <div v-if="result1b" class="result-card">
@@ -39,8 +35,6 @@
       <div class="form-card flex-card">
         <h4>labelPosition="top"</h4>
         <DForm :schema="simpleSchema" label-position="top" @submit="(v: any) => (result1c = v)">
-          <DFormItem name="name" :schema="simpleSchema.properties.name" />
-          <DFormItem name="email" :schema="simpleSchema.properties.email" />
           <el-button type="primary" native-type="submit">Submit</el-button>
         </DForm>
         <div v-if="result1c" class="result-card">
@@ -59,8 +53,6 @@
       <div class="form-card flex-card">
         <h4>labelWidth="80px"</h4>
         <DForm :schema="simpleSchema" label-width="80px" @submit="(v: any) => (result2a = v)">
-          <DFormItem name="name" :schema="simpleSchema.properties.name" />
-          <DFormItem name="email" :schema="simpleSchema.properties.email" />
           <el-button type="primary" native-type="submit">Submit</el-button>
         </DForm>
         <div v-if="result2a" class="result-card">
@@ -71,8 +63,6 @@
       <div class="form-card flex-card">
         <h4>labelWidth="200px"</h4>
         <DForm :schema="simpleSchema" label-width="200px" @submit="(v: any) => (result2b = v)">
-          <DFormItem name="name" :schema="simpleSchema.properties.name" />
-          <DFormItem name="email" :schema="simpleSchema.properties.email" />
           <el-button type="primary" native-type="submit">Submit</el-button>
         </DForm>
         <div v-if="result2b" class="result-card">
@@ -95,10 +85,6 @@
         label-width="100px"
         @submit="(v: any) => (result3 = v)"
       >
-        <DFormItem name="name" :schema="perFieldSchema.properties.name" />
-        <DFormItem name="email" :schema="perFieldSchema.properties.email" />
-        <DFormItem name="phone" :schema="perFieldSchema.properties.phone" />
-        <DFormItem name="city" :schema="perFieldSchema.properties.city" />
         <el-button type="primary" native-type="submit">Submit</el-button>
       </DForm>
     </div>
@@ -107,21 +93,15 @@
       <pre>{{ JSON.stringify(result3, null, 2) }}</pre>
     </div>
 
-    <!-- Section 4: DFormItem prop override -->
-    <h3 class="section-title">DFormItem Prop Override</h3>
+    <!-- Section 4: uiSchema Per-field Override -->
+    <h3 class="section-title">uiSchema Per-field Override</h3>
     <p class="section-desc">
-      Pass <code>labelPosition</code> or <code>labelWidth</code> directly on
-      <code>&lt;DFormItem&gt;</code> to override all other sources. This has the highest priority.
+      Use <code>schema.uiSchema</code> per-field overrides to control <code>labelPosition</code> and
+      <code>labelWidth</code> for individual fields. Per-field uiSchema has higher priority than
+      form-level settings.
     </p>
     <div class="form-card">
-      <DForm
-        :schema="simpleSchema"
-        label-position="right"
-        label-width="80px"
-        @submit="(v: any) => (result4 = v)"
-      >
-        <DFormItem name="name" :schema="simpleSchema.properties.name" label-position="top" />
-        <DFormItem name="email" :schema="simpleSchema.properties.email" label-width="200px" />
+      <DForm :schema="overrideSchema" @submit="(v: any) => (result4 = v)">
         <el-button type="primary" native-type="submit">Submit</el-button>
       </DForm>
     </div>
@@ -138,8 +118,6 @@
     </p>
     <div class="form-card">
       <DForm :schema="uiSchemaSchema" @submit="(v: any) => (result5 = v)">
-        <DFormItem name="name" :schema="uiSchemaSchema.properties.name" />
-        <DFormItem name="email" :schema="uiSchemaSchema.properties.email" />
         <el-button type="primary" native-type="submit">Submit</el-button>
       </DForm>
     </div>
@@ -152,7 +130,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { DForm, DFormItem } from '@d-form/vue'
+import { DForm } from '@d-form/vue'
 import type { FormSchema } from '@d-form/shared'
 import { ElButton } from 'element-plus'
 
@@ -201,6 +179,19 @@ const uiSchemaSchema: FormSchema = {
     email: { type: 'string', component: 'input', title: 'Email' },
   },
   uiSchema: { labelPosition: 'top', labelWidth: '120px' },
+}
+
+const overrideSchema: FormSchema = {
+  type: 'object',
+  properties: {
+    name: { type: 'string', component: 'input', title: 'Name' },
+    email: { type: 'string', component: 'input', title: 'Email' },
+  },
+  uiSchema: {
+    labelPosition: 'top',
+    name: { labelPosition: 'top' },
+    email: { labelWidth: '200px' },
+  },
 }
 
 const result1a = ref<Record<string, any> | null>(null)

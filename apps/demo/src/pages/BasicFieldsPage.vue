@@ -5,24 +5,6 @@
 
     <div class="form-card">
       <DForm :schema="schema" :initial-values="initialValues" @submit="handleSubmit">
-        <DFormItem name="name" :schema="schema.properties.name" />
-        <DFormItem name="category" :schema="schema.properties.category" />
-        <DFormItem name="birthday" :schema="schema.properties.birthday" />
-        <DFormItem name="notes" :schema="schema.properties.notes" />
-        <DFormItem name="quantity" :schema="schema.properties.quantity" />
-        <DFormItem name="gender" :schema="schema.properties.gender" />
-        <DFormItem name="active" :schema="schema.properties.active" />
-        <DFormItem name="agree" :schema="schema.properties.agree" />
-        <DFormItem name="appointmentTime" :schema="schema.properties.appointmentTime" />
-        <DFormItem name="deliveryTime" :schema="schema.properties.deliveryTime" />
-        <DFormItem name="satisfaction" :schema="schema.properties.satisfaction" />
-        <DFormItem name="rating" :schema="schema.properties.rating" />
-        <DFormItem name="favoriteColor" :schema="schema.properties.favoriteColor" />
-        <DFormItem name="region" :schema="schema.properties.region" />
-        <DFormItem name="department" :schema="schema.properties.department" />
-        <DFormItem name="search" :schema="schema.properties.search" />
-        <DFormItem name="hobbies" :schema="schema.properties.hobbies" />
-        <DFormItem name="attachments" :schema="schema.properties.attachments" />
         <el-button type="primary" native-type="submit">Submit</el-button>
       </DForm>
     </div>
@@ -36,7 +18,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { DForm, DFormItem } from '@d-form/vue'
+import { DForm } from '@d-form/vue'
 import type { FormSchema } from '@d-form/shared'
 import { ElButton } from 'element-plus'
 

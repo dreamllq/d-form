@@ -8,13 +8,10 @@
       <div class="form-card">
         <DForm
           ref="cascadingFormRef"
-          :schema="cascadingSchema"
+          :schema="cascadingFullSchema"
           :initial-values="{ country: '', city: '' }"
           @submit="handleCascadingSubmit"
-        >
-          <DFormItem name="country" :schema="cascadingSchema.properties.country" />
-          <DFormItem name="city" :schema="cityFieldSchema" />
-        </DForm>
+        ></DForm>
         <pre class="state-preview">{{
           JSON.stringify(cascadingFormRef?.values ?? { country: '', city: '' }, null, 2)
         }}</pre>
@@ -29,11 +26,7 @@
           :schema="computedSchema"
           :initial-values="{ price: 0, quantity: 1, total: 0 }"
           @submit="handleComputedSubmit"
-        >
-          <DFormItem name="price" :schema="computedSchema.properties.price" />
-          <DFormItem name="quantity" :schema="computedSchema.properties.quantity" />
-          <DFormItem name="total" :schema="computedSchema.properties.total" />
-        </DForm>
+        ></DForm>
         <pre class="state-preview">{{
           JSON.stringify(computedFormRef?.values ?? { price: 0, quantity: 1, total: 0 }, null, 2)
         }}</pre>
@@ -45,22 +38,10 @@
       <div class="form-card">
         <DForm
           ref="condFormRef"
-          :schema="conditionalSchema"
+          :schema="conditionalFullSchema"
           :initial-values="{ accountType: 'personal', companyName: '', companySize: '' }"
           @submit="handleCondSubmit"
-        >
-          <DFormItem name="accountType" :schema="conditionalSchema.properties.accountType" />
-          <DFormItem
-            v-if="condFormRef?.values?.accountType === 'business'"
-            name="companyName"
-            :schema="conditionalSchema.properties.companyName"
-          />
-          <DFormItem
-            v-if="condFormRef?.values?.accountType === 'business'"
-            name="companySize"
-            :schema="conditionalSchema.properties.companySize"
-          />
-        </DForm>
+        ></DForm>
         <pre class="state-preview">{{
           JSON.stringify(
             condFormRef?.values ?? { accountType: 'personal', companyName: '', companySize: '' },
@@ -75,7 +56,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { DForm, DFormItem } from '@d-form/vue'
+import { DForm } from '@d-form/vue'
 import type { FormSchema } from '@d-form/shared'
 
 // --- Section 1: Country-City Cascading ---
@@ -131,6 +112,14 @@ const cityFieldSchema = computed(() => ({
   title: 'City',
   componentProps: {
     options: cityMap[selectedCountry.value] || [],
+  },
+}))
+
+const cascadingFullSchema = computed(() => ({
+  type: 'object' as const,
+  properties: {
+    country: cascadingSchema.properties.country,
+    city: cityFieldSchema.value,
   },
 }))
 
@@ -215,6 +204,22 @@ const conditionalSchema: FormSchema = {
     },
   },
 }
+
+const conditionalFullSchema = computed(() => {
+  const isBusiness = condFormRef.value?.values?.accountType === 'business'
+  return {
+    type: 'object' as const,
+    properties: {
+      accountType: conditionalSchema.properties.accountType,
+      ...(isBusiness
+        ? {
+            companyName: conditionalSchema.properties.companyName,
+            companySize: conditionalSchema.properties.companySize,
+          }
+        : {}),
+    },
+  }
+})
 
 const handleCondSubmit = (values: Record<string, unknown>) => {
   console.warn('Conditional:', values)
