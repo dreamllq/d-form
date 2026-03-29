@@ -1,8 +1,8 @@
 <template>
   <el-input
+    v-bind="componentProps"
     :model-value="modelValue"
     :disabled="disabled"
-    :placeholder="placeholder"
     :class="{ 'is-error': error }"
     @update:model-value="$emit('update:modelValue', $event)"
     @blur="$emit('blur')"
@@ -25,8 +25,15 @@ const props = defineProps<{
 
 defineEmits<{
   'update:modelValue': [value: string]
-  'blur': []
+  blur: []
 }>()
 
-const placeholder = computed(() => props.schema?.placeholder)
+const componentProps = computed(() => {
+  const cp = { ...(props.schema?.componentProps ?? {}) }
+  delete cp.modelValue
+  delete cp['model-value']
+  delete cp.disabled
+  delete cp.class
+  return cp
+})
 </script>
