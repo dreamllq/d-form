@@ -30,8 +30,7 @@ const fieldValue = computed({
 const fieldError = computed(() => error.value)
 
 const effectiveDisabled = computed(() => {
-  if (props.disabled !== undefined) return props.disabled
-  return fieldDisabled.value
+  return fieldDisabled.value ?? props.schema?.disabled ?? false
 })
 
 const renderComponent = computed(() => {
