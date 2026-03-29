@@ -45,33 +45,33 @@ export function useField<T = any>(
   form: Form,
   options?: UseFieldOptions
 ): UseFieldReturn<T> {
-  const field = ref<Field | undefined>(form.getField(path) || form.registerField(path, options?.schema))
+  const field: Field | undefined = form.getField(path) || form.registerField(path, options?.schema)
   
-  const value: Ref<T> = ref<T>(field.value?.getValue() as T) as Ref<T>
-  const error = ref<string | undefined>(field.value?.getError())
-  const touched = ref(field.value?.getState().touched ?? false)
-  const dirty = ref(field.value?.getState().dirty ?? false)
-  const visible = ref(field.value?.getState().visible ?? true)
-  const disabled = ref(field.value?.getState().disabled ?? false)
-  const validating = ref(field.value?.getState().validating ?? false)
+  const value: Ref<T> = ref<T>(field?.getValue() as T) as Ref<T>
+  const error = ref<string | undefined>(field?.getError())
+  const touched = ref(field?.getState().touched ?? false)
+  const dirty = ref(field?.getState().dirty ?? false)
+  const visible = ref(field?.getState().visible ?? true)
+  const disabled = ref(field?.getState().disabled ?? false)
+  const validating = ref(field?.getState().validating ?? false)
 
   const setValue = (newValue: T) => {
-    if (field.value) {
+    if (field) {
       form.setFieldValue(path, newValue)
       value.value = newValue
     }
   }
 
   const setTouched = (isTouched: boolean) => {
-    if (field.value) {
-      field.value.setTouched(isTouched)
+    if (field) {
+      field.setTouched(isTouched)
       touched.value = isTouched
     }
   }
 
   const validate = (): ValidationResult | Promise<ValidationResult> => {
-    if (field.value) {
-      return field.value.validate()
+    if (field) {
+      return field.validate()
     }
     return { valid: true, errors: [] }
   }
@@ -79,12 +79,12 @@ export function useField<T = any>(
   let unsubscribeValueChange: (() => void) | undefined
   let unsubscribeStateChange: (() => void) | undefined
 
-  if (field.value) {
-    unsubscribeValueChange = field.value.on('valueChange', (newValue: T) => {
+  if (field) {
+    unsubscribeValueChange = field.on('valueChange', (newValue: T) => {
       value.value = newValue
     })
 
-    unsubscribeStateChange = field.value.on('stateChange', (state: FieldState) => {
+    unsubscribeStateChange = field.on('stateChange', (state: FieldState) => {
       error.value = state.error
       touched.value = state.touched
       dirty.value = state.dirty
@@ -110,6 +110,6 @@ export function useField<T = any>(
     setValue,
     setTouched,
     validate,
-    field: field.value
+    field,
   }
 }

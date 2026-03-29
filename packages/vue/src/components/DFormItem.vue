@@ -25,10 +25,11 @@ const { error } = useField(props.name, formContext?.form, {
 
 const displayLabel = computed(() => props.label ?? props.schema?.title)
 
-const isRequired = computed(() => props.required || props.schema?.required || false)
+const isRequired = computed(() => {
+  if (props.required || props.schema?.required) return true
+  return props.schema?.validation?.rules?.some((r) => r.type === 'required') ?? false
+})
 const showRequiredAsterisk = computed(() => uiSchema?.showRequiredAsterisk !== false)
-
-const showError = computed(() => !!error.value)
 
 const displayDescription = computed(() => props.schema?.description)
 
@@ -44,11 +45,12 @@ const labelPosition = computed(() => {
 const showColon = computed(() => uiSchema?.colon ?? false)
 const labelStyle = computed(() => {
   const w =
-    props.labelWidth ?? props.schema?.labelWidth ?? formContext?.labelWidth ?? uiSchema?.labelWidth
-  if (w !== undefined && w !== null) {
-    return { width: typeof w === 'number' ? `${w}px` : w }
-  }
-  return {}
+    props.labelWidth ??
+    props.schema?.labelWidth ??
+    formContext?.labelWidth ??
+    uiSchema?.labelWidth ??
+    '60px'
+  return { width: typeof w === 'number' ? `${w}px` : w }
 })
 
 const itemClasses = computed(() => {
@@ -64,30 +66,44 @@ const itemClasses = computed(() => {
 
 <template>
   <div :class="itemClasses">
-    <label v-if="displayLabel" class="d-form-item__label" :style="labelStyle">
-      {{ displayLabel }}{{ showColon ? ':' : '' }}
-      <span v-if="isRequired && showRequiredAsterisk" class="d-form-item__required">*</span>
-    </label>
+    <div
+      class="d-form-item__label-wrap"
+      :style="displayLabel && labelPosition !== 'top' ? labelStyle : {}"
+    >
+      <label
+        v-if="displayLabel"
+        class="d-form-item__label"
+        :class="{ 'is-required': isRequired && showRequiredAsterisk }"
+      >
+        {{ displayLabel }}{{ showColon ? ':' : '' }}
+      </label>
+    </div>
     <div class="d-form-item__control">
       <slot>
         <DField :name="name" :schema="schema" :component="component" :disabled="disabled" />
       </slot>
-    </div>
-    <div v-if="showError" class="d-form-item__error">{{ error }}</div>
-    <div v-if="displayDescription" class="d-form-item__description">
-      {{ displayDescription }}
+      <div class="d-form-item__error">{{ error }}</div>
+      <div v-if="displayDescription" class="d-form-item__description">
+        {{ displayDescription }}
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
 .d-form-item {
-  margin-bottom: 18px;
+  padding-bottom: 18px;
+}
+
+.d-form-item__label-wrap {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .d-form-item--label-left {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .d-form-item--label-top {
@@ -95,9 +111,21 @@ const itemClasses = computed(() => {
   flex-direction: column;
 }
 
+.d-form-item--label-top .d-form-item__label {
+  line-height: normal;
+  margin-bottom: 8px;
+}
+
+.d-form-item__label.is-required::before {
+  content: '*';
+  color: red;
+  margin-right: 4px;
+}
+
 .d-form-item__label {
   flex-shrink: 0;
   font-size: 14px;
+  line-height: 1;
 }
 
 .d-form-item--label-left .d-form-item__label {
@@ -106,20 +134,34 @@ const itemClasses = computed(() => {
 
 .d-form-item--label-right {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .d-form-item--label-right .d-form-item__label {
   text-align: right;
+  margin-right: 8px;
 }
 
-.d-form-item__required {
-  color: red;
+.d-form-item__control {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  flex: 1;
 }
 
 .d-form-item__error {
+  position: absolute;
+  top: 100%;
+  left: 0;
   color: red;
   font-size: 12px;
+  line-height: 18px;
+  visibility: hidden;
+}
+
+.d-form-item__error:not(:empty) {
+  visibility: visible;
 }
 
 .d-form-item__description {
