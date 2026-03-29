@@ -84,7 +84,6 @@ const itemStyle = computed(() => {
         :class="{ 'is-required': isRequired && showRequiredAsterisk }"
       >
         {{ displayLabel }}{{ showColon ? ':' : '' }}
-        <span v-if="isRequired && showRequiredAsterisk" class="d-form-item__required">*</span>
       </label>
     </div>
     <div class="d-form-item__control">
@@ -153,20 +152,17 @@ const itemStyle = computed(() => {
 
 .d-form-item__control {
   position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
   flex: 1;
 }
 
 .d-form-item__error {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: -2px;
   color: red;
   font-size: 12px;
   line-height: 18px;
-}
-
-.d-form-item__required {
-  color: red;
 }
 
 .d-form-item__description {
