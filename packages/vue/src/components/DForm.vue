@@ -95,3 +95,23 @@ defineExpose({
     <slot />
   </form>
 </template>
+
+<style scoped>
+.d-form--vertical {
+  display: flex;
+  flex-direction: column;
+}
+
+.d-form--horizontal {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.d-form--inline {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+</style>

@@ -34,13 +34,18 @@ const showRequiredAsterisk = computed(() => uiSchema?.showRequiredAsterisk !== f
 
 const displayDescription = computed(() => props.schema?.description)
 
+const layoutDefaultLabelPosition = computed(() => {
+  if (formContext?.layout === 'vertical') return 'top'
+  return 'right'
+})
+
 const labelPosition = computed(() => {
   return (
     props.labelPosition ??
     props.schema?.labelPosition ??
     formContext?.labelPosition ??
     uiSchema?.labelPosition ??
-    'right'
+    layoutDefaultLabelPosition.value
   )
 })
 const showColon = computed(() => uiSchema?.colon ?? false)

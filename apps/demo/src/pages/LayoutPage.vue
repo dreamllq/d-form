@@ -12,6 +12,7 @@
     <div class="forms-row">
       <div class="form-card flex-card">
         <h4>layout="vertical"</h4>
+        <p class="mode-hint">Labels on top, fields stacked</p>
         <DForm :schema="simpleSchema" layout="vertical" @submit="(v: any) => (result1a = v)">
           <DFormItems />
           <el-button type="primary" native-type="submit">Submit</el-button>
@@ -23,6 +24,7 @@
 
       <div class="form-card flex-card">
         <h4>layout="horizontal"</h4>
+        <p class="mode-hint">Labels beside fields, stacked vertically</p>
         <DForm :schema="simpleSchema" layout="horizontal" @submit="(v: any) => (result1b = v)">
           <DFormItems />
           <el-button type="primary" native-type="submit">Submit</el-button>
@@ -34,6 +36,7 @@
 
       <div class="form-card flex-card">
         <h4>layout="inline"</h4>
+        <p class="mode-hint">Fields flow in a row</p>
         <DForm :schema="simpleSchema" layout="inline" @submit="(v: any) => (result1c = v)">
           <DFormItems />
           <el-button type="primary" native-type="submit">Submit</el-button>
@@ -184,6 +187,7 @@ const simpleSchema: FormSchema = {
   properties: {
     name: { type: 'string', component: 'input', title: 'Name' },
     email: { type: 'string', component: 'input', title: 'Email' },
+    phone: { type: 'string', component: 'input', title: 'Phone' },
   },
 }
 
@@ -280,8 +284,13 @@ const result5 = ref<Record<string, any> | null>(null)
 .flex-card h4 {
   font-size: 13px;
   color: #909399;
-  margin-bottom: 12px;
+  margin-bottom: 4px;
   font-weight: 500;
+}
+.mode-hint {
+  font-size: 12px;
+  color: #b0b3b8;
+  margin-bottom: 12px;
 }
 .form-card {
   background: #fff;
