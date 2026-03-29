@@ -3,71 +3,91 @@
  * Based on x-reactions protocol (Formily-style)
  */
 
-import type { FieldState, FieldSchema } from './field'
+import { z } from 'zod'
+import { FieldSchema, FieldState } from './field'
 
-export interface ReactionEffect {
+export const ReactionEffect = z.object({
   /** State changes to apply */
-  state?: Partial<FieldState>
+  get state() {
+    return FieldState.partial().optional()
+  },
   /** Schema changes to apply */
-  schema?: Partial<FieldSchema>
+  get schema() {
+    return FieldSchema.partial().optional()
+  },
   /** Custom action to execute (expression string) */
-  run?: string
-}
+  run: z.string().optional(),
+})
 
-export interface ReactionConfig {
+export type ReactionEffect = z.infer<typeof ReactionEffect>
+
+export const ReactionConfig = z.object({
   /** Field paths this reaction depends on */
-  dependencies?: string[]
+  dependencies: z.array(z.string()).optional(),
   /** Target field(s) to affect */
-  target?: string | string[]
+  target: z.union([z.string(), z.array(z.string())]).optional(),
   /** Condition expression (when to apply fulfill) */
-  when?: string
+  when: z.string().optional(),
   /** Effect to apply when condition is true */
-  fulfill?: ReactionEffect
+  fulfill: ReactionEffect.optional(),
   /** Effect to apply when condition is false */
-  otherwise?: ReactionEffect
-}
+  otherwise: ReactionEffect.optional(),
+})
 
-export interface ReactionSchema {
+export type ReactionConfig = z.infer<typeof ReactionConfig>
+
+export const ReactionSchema = z.object({
   /** Reaction type */
-  type?: 'linkage' | 'effect' | 'computed'
+  type: z.enum(['linkage', 'effect', 'computed']).optional(),
   /** Field paths this reaction depends on */
-  dependencies?: string[]
+  dependencies: z.array(z.string()).optional(),
   /** Target field(s) to affect */
-  target?: string | string[]
+  target: z.union([z.string(), z.array(z.string())]).optional(),
   /** Condition expression */
-  when?: string
+  when: z.string().optional(),
   /** Effect when condition is true */
-  fulfill?: ReactionEffect
+  fulfill: ReactionEffect.optional(),
   /** Effect when condition is false */
-  otherwise?: ReactionEffect
+  otherwise: ReactionEffect.optional(),
   /** Computed value expression */
-  expression?: string
+  expression: z.string().optional(),
   /** Custom reaction executor name */
-  executor?: string
-}
+  executor: z.string().optional(),
+})
 
-export interface ReactionContext {
+export type ReactionSchema = z.infer<typeof ReactionSchema>
+
+export const ReactionContext = z.object({
   /** Current field value */
-  $self: any
+  $self: z.any(),
   /** Dependency field values */
-  $deps: Record<string, any>
+  $deps: z.record(z.string(), z.any()),
   /** Form instance reference */
-  $form: any
+  $form: z.any(),
   /** All form values */
-  $values: Record<string, any>
+  $values: z.record(z.string(), z.any()),
   /** Field path */
-  $path: string
+  $path: z.string(),
   /** Field schema */
-  $schema: FieldSchema
+  get $schema() {
+    return FieldSchema
+  },
   /** Field state */
-  $state: FieldState
-}
+  get $state() {
+    return FieldState
+  },
+})
 
-export type ReactionEvaluator = (
-  expression: string,
-  context: ReactionContext
-) => any
+export type ReactionContext = z.infer<typeof ReactionContext>
 
+/**
+ * ReactionEvaluator — kept as TypeScript type (function type).
+ */
+export type ReactionEvaluator = (expression: string, context: ReactionContext) => any
+
+/**
+ * ReactionExecutor — kept as TypeScript interface (contains methods).
+ */
 export interface ReactionExecutor {
   /** Executor name */
   name: string

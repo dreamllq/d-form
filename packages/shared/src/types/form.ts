@@ -2,72 +2,102 @@
  * Form types for d-form
  */
 
-import type { FieldSchema, FieldState } from './field'
-import type { GridConfig } from './grid'
-import type { ReactionSchema } from './reaction'
-import type { FormValidationResult } from './validation'
+import { z } from 'zod'
+import { FieldSchema, FieldState } from './field'
+import { GridConfig } from './grid'
+import { ReactionSchema } from './reaction'
+import { FormValidationResult } from './validation'
 
-export interface UISchema {
+export const UISchema = z.object({
   /** Form layout direction */
-  layout?: 'vertical' | 'inline'
+  layout: z.enum(['vertical', 'inline']).optional(),
   /** Label width (e.g., '100px', 100) */
-  labelWidth?: string | number
+  labelWidth: z.union([z.string(), z.number()]).optional(),
   /** Gutter between fields */
-  gutter?: number
+  gutter: z.number().optional(),
   /** Number of columns in grid layout */
-  columns?: number
+  columns: z.number().optional(),
   /** Form size */
-  size?: 'small' | 'default' | 'large'
+  size: z.enum(['small', 'default', 'large']).optional(),
   /** Label position */
-  labelPosition?: 'left' | 'right' | 'top'
+  labelPosition: z.enum(['left', 'right', 'top']).optional(),
   /** Show colon after label */
-  colon?: boolean
+  colon: z.boolean().optional(),
   /** Show required asterisk */
-  showRequiredAsterisk?: boolean
+  showRequiredAsterisk: z.boolean().optional(),
   /** Grid layout configuration */
-  grid?: GridConfig
+  grid: GridConfig.optional(),
   /** Minimum number of columns */
-  minColumns?: number
-}
+  minColumns: z.number().optional(),
+})
 
-export interface FormSchema<T = Record<string, any>> {
+export type UISchema = z.infer<typeof UISchema>
+
+export const FormSchema = z.object({
   /** Schema type (always 'object' for forms) */
-  type: 'object'
+  type: z.literal('object'),
   /** Form field schemas */
-  properties: Record<string, FieldSchema>
+  properties: z.record(z.string(), FieldSchema),
   /** UI configuration */
-  uiSchema?: UISchema
+  uiSchema: UISchema.optional(),
   /** Form-level reactions */
-  reactions?: ReactionSchema[]
+  reactions: z.array(ReactionSchema).optional(),
   /** Form title */
-  title?: string
+  title: z.string().optional(),
   /** Form description */
-  description?: string
+  description: z.string().optional(),
   /** Default form values */
+  default: z.record(z.string(), z.any()).optional(),
+})
+
+/**
+ * FormSchema type — preserves the original generic for backward compatibility.
+ * The generic T only affects the `default` field.
+ */
+export type FormSchema<T = Record<string, any>> = Omit<z.infer<typeof FormSchema>, 'default'> & {
   default?: T
 }
 
-export interface FormState<T = Record<string, any>> {
+export const FormState = z.object({
   /** Form values */
-  values: T
+  values: z.record(z.string(), z.any()),
   /** Field-level errors */
-  errors: Partial<Record<keyof T, string>>
+  errors: z.record(z.string(), z.string().optional()).optional(),
   /** Field-level touched state */
-  touched: Partial<Record<keyof T, boolean>>
+  touched: z.record(z.string(), z.boolean().optional()).optional(),
   /** Form has been modified */
-  dirty: boolean
+  dirty: z.boolean(),
   /** Form is submitting */
-  submitting: boolean
+  submitting: z.boolean(),
   /** Form is valid (no errors) */
-  isValid: boolean
+  isValid: z.boolean(),
   /** Form is validating */
-  validating: boolean
+  validating: z.boolean(),
   /** Form has been submitted at least once */
-  submitted: boolean
+  submitted: z.boolean(),
   /** Form submission count */
+  submitCount: z.number(),
+})
+
+/**
+ * FormState type — preserves the original generic for backward compatibility.
+ * The generic T affects `values`, `errors`, and `touched` fields.
+ */
+export type FormState<T = Record<string, any>> = {
+  values: T
+  errors: Partial<Record<keyof T, string>>
+  touched: Partial<Record<keyof T, boolean>>
+  dirty: boolean
+  submitting: boolean
+  isValid: boolean
+  validating: boolean
+  submitted: boolean
   submitCount: number
 }
 
+/**
+ * FormInstance — kept as TypeScript interface (contains methods, not serializable).
+ */
 export interface FormInstance<T = Record<string, any>> {
   /** Form schema */
   schema: FormSchema<T>
@@ -105,23 +135,39 @@ export interface FormInstance<T = Record<string, any>> {
   clearErrors: () => void
 }
 
-export interface FormOptions<T = Record<string, any>> {
+export const FormOptions = z.object({
   /** Form schema */
-  schema?: FormSchema<T>
+  schema: FormSchema.optional(),
   /** Initial values */
-  initialValues?: Partial<T>
+  initialValues: z.record(z.string(), z.any()).optional(),
   /** onSubmit callback */
-  onSubmit?: (values: T) => Promise<void> | void
+  onSubmit: z.any().optional(),
   /** onValuesChange callback */
-  onValuesChange?: (values: T, changedPath: string) => void
+  onValuesChange: z.any().optional(),
   /** Validate on mount */
-  validateOnMount?: boolean
+  validateOnMount: z.boolean().optional(),
   /** Validate on change */
-  validateOnChange?: boolean
+  validateOnChange: z.boolean().optional(),
   /** Validate on blur */
+  validateOnBlur: z.boolean().optional(),
+})
+
+/**
+ * FormOptions type — preserves the original generic for backward compatibility.
+ */
+export type FormOptions<T = Record<string, any>> = {
+  schema?: FormSchema<T>
+  initialValues?: Partial<T>
+  onSubmit?: (values: T) => Promise<void> | void
+  onValuesChange?: (values: T, changedPath: string) => void
+  validateOnMount?: boolean
+  validateOnChange?: boolean
   validateOnBlur?: boolean
 }
 
+/**
+ * FormEventHandler — kept as TypeScript type (function type).
+ */
 export type FormEventHandler = (event: {
   type: 'change' | 'blur' | 'focus' | 'submit'
   path: string

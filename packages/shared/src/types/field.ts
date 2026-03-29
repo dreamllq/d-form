@@ -2,84 +2,114 @@
  * Field types for d-form
  */
 
-import type { ValidationConfig } from './validation'
-import type { ReactionConfig } from './reaction'
+import { z } from 'zod'
+import { ReactionConfig } from './reaction'
+import { ValidationConfig, type ValidationResult } from './validation'
 
-export type FieldType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'date' | 'void'
+export const FieldType = z.enum(['string', 'number', 'boolean', 'object', 'array', 'date', 'void'])
 
-export interface FieldSchema<T = any> {
+export type FieldType = z.infer<typeof FieldType>
+
+/**
+ * Field schema — recursive via getter pattern (Zod v4).
+ * `properties` and `items` reference FieldSchema itself;
+ * `reactions` references ReactionConfig from ./reaction (circular module dep, safe via ESM live bindings).
+ */
+export const FieldSchema = z.object({
   /** Field type */
-  type: FieldType | string
+  type: z.string(),
   /** Field key/path */
-  key?: string
+  key: z.string().optional(),
   /** Field label/title */
-  title?: string
+  title: z.string().optional(),
   /** Field description/help text */
-  description?: string
+  description: z.string().optional(),
   /** Default value */
-  default?: T
+  default: z.any().optional(),
   /** Component name to render */
-  component?: string
+  component: z.string().optional(),
   /** Component props */
-  componentProps?: Record<string, any>
+  componentProps: z.record(z.string(), z.any()).optional(),
   /** Validation configuration */
-  validation?: ValidationConfig
+  validation: ValidationConfig.optional(),
   /** Reaction configuration */
-  reactions?: ReactionConfig[]
+  get reactions() {
+    return z.array(ReactionConfig).optional()
+  },
   /** Field visibility */
-  visible?: boolean
+  visible: z.boolean().optional(),
   /** Field disabled state */
-  disabled?: boolean
+  disabled: z.boolean().optional(),
   /** Field placeholder */
-  placeholder?: string
+  placeholder: z.string().optional(),
   /** Label position override for this field */
-  labelPosition?: 'left' | 'right' | 'top'
+  labelPosition: z.enum(['left', 'right', 'top']).optional(),
   /** Label width override for this field (e.g. '100px', 100) */
-  labelWidth?: string | number
+  labelWidth: z.union([z.string(), z.number()]).optional(),
   /** Field required marker */
-  required?: boolean
+  required: z.boolean().optional(),
   /** Custom enum values */
-  enum?: Array<{ label: string; value: any }> | any[]
+  enum: z.array(z.any()).optional(),
   /** Nested properties (for object type) */
-  properties?: Record<string, FieldSchema>
+  get properties() {
+    return z.record(z.string(), FieldSchema).optional()
+  },
   /** Array items schema (for array type) */
-  items?: FieldSchema
-}
+  get items() {
+    return FieldSchema.optional()
+  },
+})
 
-export interface FieldState<T = any> {
+/**
+ * FieldSchema type — preserves the original generic for backward compatibility.
+ * The generic T only affects the `default` field.
+ */
+export type FieldSchema<T = any> = Omit<z.infer<typeof FieldSchema>, 'default'> & { default?: T }
+
+export const FieldState = z.object({
   /** Current field value */
-  value: T
+  value: z.any(),
   /** Validation error message */
-  error?: string
+  error: z.string().optional(),
   /** Field has been touched/blurred */
-  touched: boolean
+  touched: z.boolean(),
   /** Field value has been modified */
-  dirty: boolean
+  dirty: z.boolean(),
   /** Field visibility state */
-  visible: boolean
+  visible: z.boolean(),
   /** Field disabled state */
-  disabled: boolean
+  disabled: z.boolean(),
   /** Field is currently being validated */
-  validating: boolean
+  validating: z.boolean(),
   /** Field is currently loading (async data) */
-  loading?: boolean
+  loading: z.boolean().optional(),
   /** Custom display value (different from actual value) */
+  displayValue: z.any().optional(),
+})
+
+export type FieldState<T = any> = Omit<z.infer<typeof FieldState>, 'value' | 'displayValue'> & {
+  value: T
   displayValue?: any
 }
 
-export interface FieldMeta {
+export const FieldMeta = z.object({
   /** Field path */
-  path: string
+  path: z.string(),
   /** Field name */
-  name: string
+  name: z.string(),
   /** Field schema reference */
-  schema: FieldSchema
+  schema: FieldSchema,
   /** Parent field path */
-  parentPath?: string
+  parentPath: z.string().optional(),
   /** Field depth in form */
-  depth: number
-}
+  depth: z.number(),
+})
 
+export type FieldMeta = z.infer<typeof FieldMeta>
+
+/**
+ * FieldInstance — kept as TypeScript interface (contains methods, not serializable).
+ */
 export interface FieldInstance {
   /** Field metadata */
   meta: FieldMeta
@@ -96,5 +126,3 @@ export interface FieldInstance {
   /** Reset field */
   reset: () => void
 }
-
-import type { ValidationResult } from './validation'

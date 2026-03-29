@@ -2,53 +2,69 @@
  * Validation types for d-form
  */
 
-export type ValidationTrigger = 'blur' | 'change'
+import { z } from 'zod'
 
-export interface ValidationRule {
+export const ValidationTrigger = z.enum(['blur', 'change'])
+
+export type ValidationTrigger = z.infer<typeof ValidationTrigger>
+
+export const ValidationRule = z.object({
   /** Validation rule type */
-  type: 'required' | 'min' | 'max' | 'minLength' | 'maxLength' | 'pattern' | 'custom'
+  type: z.enum(['required', 'min', 'max', 'minLength', 'maxLength', 'pattern', 'custom']),
   /** Rule value (e.g., min: 5, maxLength: 10) */
-  value?: any
+  value: z.any().optional(),
   /** Custom error message */
-  message?: string
+  message: z.string().optional(),
   /** Custom validator function for 'custom' type */
-  validator?: (value: any) => boolean | Promise<boolean>
+  validator: z.any().optional(),
   /** Undefined = matches all triggers (Element Plus convention) */
-  trigger?: ValidationTrigger | ValidationTrigger[]
-}
+  trigger: z.union([ValidationTrigger, z.array(ValidationTrigger)]).optional(),
+})
 
-export interface ValidationConfig {
+export type ValidationRule = z.infer<typeof ValidationRule>
+
+export const ValidationConfig = z.object({
   /** Array of validation rules */
-  rules?: ValidationRule[]
+  rules: z.array(ValidationRule).optional(),
   /** Custom validator function name or expression */
-  validator?: string
+  validator: z.string().optional(),
   /** Trigger validation on: blur, change, submit */
-  trigger?: 'blur' | 'change' | 'submit' | ('blur' | 'change' | 'submit')[]
+  trigger: z
+    .union([z.enum(['blur', 'change', 'submit']), z.array(z.enum(['blur', 'change', 'submit']))])
+    .optional(),
   /** Validate when field is visible only */
-  validateVisibleOnly?: boolean
-}
+  validateVisibleOnly: z.boolean().optional(),
+})
 
-export interface ValidationResult {
+export type ValidationConfig = z.infer<typeof ValidationConfig>
+
+export const ValidationResult = z.object({
   /** Whether validation passed */
-  valid: boolean
+  valid: z.boolean(),
   /** Array of error messages */
-  errors: string[]
+  errors: z.array(z.string()),
   /** Warning messages (non-blocking) */
-  warnings?: string[]
-}
+  warnings: z.array(z.string()).optional(),
+})
 
-export interface FieldValidationResult {
+export type ValidationResult = z.infer<typeof ValidationResult>
+
+export const FieldValidationResult = z.object({
   /** Field name/path */
-  field: string
+  field: z.string(),
   /** Validation result */
-  result: ValidationResult
-}
+  result: ValidationResult,
+})
 
-export interface FormValidationResult {
+export type FieldValidationResult = z.infer<typeof FieldValidationResult>
+
+export const FormValidationResult = z.object({
   /** Whether form is valid */
-  valid: boolean
+  valid: z.boolean(),
   /** Field-level validation results */
-  fields: Record<string, ValidationResult>
+  fields: z.record(z.string(), ValidationResult),
   /** All error messages */
-  errors: string[]
-}
+  errors: z.array(z.string()),
+})
+
+export type FormValidationResult = z.infer<typeof FormValidationResult>

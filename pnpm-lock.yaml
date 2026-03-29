@@ -124,6 +124,10 @@ importers:
         version: 29.0.1
 
   packages/shared:
+    dependencies:
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
     devDependencies:
       '@vitest/coverage-v8':
         specifier: ^3.0.0

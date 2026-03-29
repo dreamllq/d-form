@@ -1,40 +1,16 @@
 /**
  * Type definitions index
- * Export all types from @d-form/shared
+ * Re-export all Zod schemas and inferred types from @d-form/shared.
+ *
+ * Each export is both:
+ *   - Zod schema (value) — for runtime validation / agent use
+ *   - Inferred type (type alias) — for TypeScript type checking
+ *
+ * `export *` re-exports both bindings under the same name.
  */
 
-// Form types
-export type {
-  FormSchema,
-  FormState,
-  FormInstance,
-  FormOptions,
-  UISchema,
-  FormEventHandler,
-} from './form'
-
-// Grid types
-export type { GridConfig } from './grid'
-
-// Field types
-export type { FieldType, FieldSchema, FieldState, FieldMeta, FieldInstance } from './field'
-
-// Validation types
-export type {
-  ValidationTrigger,
-  ValidationRule,
-  ValidationConfig,
-  ValidationResult,
-  FieldValidationResult,
-  FormValidationResult,
-} from './validation'
-
-// Reaction types
-export type {
-  ReactionEffect,
-  ReactionConfig,
-  ReactionSchema,
-  ReactionContext,
-  ReactionEvaluator,
-  ReactionExecutor,
-} from './reaction'
+export * from './form'
+export * from './grid'
+export * from './field'
+export * from './validation'
+export * from './reaction'
