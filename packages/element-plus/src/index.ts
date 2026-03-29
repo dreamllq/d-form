@@ -9,6 +9,16 @@ import RadioAdapter from './adapters/RadioAdapter.vue'
 import SwitchAdapter from './adapters/SwitchAdapter.vue'
 import InputNumberAdapter from './adapters/InputNumberAdapter.vue'
 import TextareaAdapter from './adapters/TextareaAdapter.vue'
+import TimePickerAdapter from './adapters/TimePickerAdapter.vue'
+import TimeSelectAdapter from './adapters/TimeSelectAdapter.vue'
+import CascaderAdapter from './adapters/CascaderAdapter.vue'
+import SliderAdapter from './adapters/SliderAdapter.vue'
+import RateAdapter from './adapters/RateAdapter.vue'
+import ColorPickerAdapter from './adapters/ColorPickerAdapter.vue'
+import TreeSelectAdapter from './adapters/TreeSelectAdapter.vue'
+import AutocompleteAdapter from './adapters/AutocompleteAdapter.vue'
+import CheckboxGroupAdapter from './adapters/CheckboxGroupAdapter.vue'
+import UploadAdapter from './adapters/UploadAdapter.vue'
 
 export {
   InputAdapter,
@@ -18,7 +28,17 @@ export {
   RadioAdapter,
   SwitchAdapter,
   InputNumberAdapter,
-  TextareaAdapter
+  TextareaAdapter,
+  TimePickerAdapter,
+  TimeSelectAdapter,
+  CascaderAdapter,
+  SliderAdapter,
+  RateAdapter,
+  ColorPickerAdapter,
+  TreeSelectAdapter,
+  AutocompleteAdapter,
+  CheckboxGroupAdapter,
+  UploadAdapter,
 }
 
 /**
@@ -34,4 +54,14 @@ export function registerElementPlusComponents(): void {
   registerComponent('switch', SwitchAdapter)
   registerComponent('input-number', InputNumberAdapter)
   registerComponent('textarea', TextareaAdapter)
+  registerComponent('time-picker', TimePickerAdapter)
+  registerComponent('time-select', TimeSelectAdapter)
+  registerComponent('cascader', CascaderAdapter)
+  registerComponent('slider', SliderAdapter)
+  registerComponent('rate', RateAdapter)
+  registerComponent('color-picker', ColorPickerAdapter)
+  registerComponent('tree-select', TreeSelectAdapter)
+  registerComponent('autocomplete', AutocompleteAdapter)
+  registerComponent('checkbox-group', CheckboxGroupAdapter)
+  registerComponent('upload', UploadAdapter)
 }
