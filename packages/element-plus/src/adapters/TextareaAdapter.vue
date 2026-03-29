@@ -1,12 +1,11 @@
 <template>
   <el-input
+    v-bind="componentProps"
     type="textarea"
     :model-value="modelValue"
     :disabled="disabled"
-    :placeholder="placeholder"
     :rows="rows"
     :autosize="autosize"
-    :maxlength="maxlength"
     :show-word-limit="showWordLimit"
     :class="{ 'is-error': error }"
     @update:model-value="$emit('update:modelValue', $event)"
@@ -33,17 +32,16 @@ defineEmits<{
   blur: []
 }>()
 
-const placeholder = computed(() => props.schema?.placeholder)
-const rows = computed(
-  () => ((props.schema?.componentProps?.rows ?? props.schema?.rows) as number) || 2
-)
-const autosize = computed(
-  () => props.schema?.componentProps?.autosize ?? props.schema?.autosize ?? false
-)
-const maxlength = computed(
-  () => (props.schema?.componentProps?.maxlength ?? props.schema?.maxlength) as number | undefined
-)
-const showWordLimit = computed(
-  () => props.schema?.componentProps?.showWordLimit ?? props.schema?.showWordLimit ?? false
-)
+const componentProps = computed(() => {
+  const cp = { ...(props.schema?.componentProps ?? {}) }
+  delete cp.modelValue
+  delete cp['model-value']
+  delete cp.disabled
+  delete cp.class
+  return cp
+})
+
+const rows = computed(() => componentProps.value.rows ?? 2)
+const autosize = computed(() => componentProps.value.autosize ?? false)
+const showWordLimit = computed(() => componentProps.value.showWordLimit ?? false)
 </script>

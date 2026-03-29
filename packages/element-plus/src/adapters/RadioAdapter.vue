@@ -1,5 +1,6 @@
 <template>
   <el-radio-group
+    v-bind="componentProps"
     :model-value="modelValue"
     :disabled="disabled"
     :class="{ 'is-error': error }"
@@ -9,11 +10,10 @@
     <el-radio
       v-for="option in options"
       :key="option.value"
-      :label="option.value"
+      :value="option.value"
+      :label="option.label"
       :disabled="option.disabled"
-    >
-      {{ option.label }}
-    </el-radio>
+    />
   </el-radio-group>
 </template>
 
@@ -42,8 +42,16 @@ defineEmits<{
   blur: []
 }>()
 
+const componentProps = computed(() => {
+  const cp = { ...(props.schema?.componentProps ?? {}) }
+  delete cp.modelValue
+  delete cp['model-value']
+  delete cp.disabled
+  delete cp.class
+  return cp
+})
+
 const options = computed<RadioOption[]>(() => {
-  const cp = props.schema?.componentProps
-  return ((cp?.options ?? props.schema?.options) as RadioOption[]) || []
+  return (componentProps.value.options as RadioOption[]) || []
 })
 </script>

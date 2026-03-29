@@ -1,11 +1,9 @@
 <template>
   <el-date-picker
+    v-bind="componentProps"
     :model-value="modelValue"
     :disabled="disabled"
-    :placeholder="placeholder"
     :type="dateType"
-    :format="format"
-    :value-format="valueFormat"
     :clearable="clearable"
     :class="{ 'is-error': error }"
     @update:model-value="$emit('update:modelValue', $event)"
@@ -32,18 +30,15 @@ defineEmits<{
   blur: []
 }>()
 
-const placeholder = computed(() => props.schema?.placeholder)
-const clearable = computed(
-  () => props.schema?.componentProps?.clearable ?? props.schema?.clearable ?? true
-)
-const dateType = computed(
-  () => ((props.schema?.componentProps?.dateType ?? props.schema?.dateType) as string) || 'date'
-)
-const format = computed(
-  () => (props.schema?.componentProps?.format ?? props.schema?.format) as string | undefined
-)
-const valueFormat = computed(
-  () =>
-    (props.schema?.componentProps?.valueFormat ?? props.schema?.valueFormat) as string | undefined
-)
+const componentProps = computed(() => {
+  const cp = { ...(props.schema?.componentProps ?? {}) }
+  delete cp.modelValue
+  delete cp['model-value']
+  delete cp.disabled
+  delete cp.class
+  return cp
+})
+
+const clearable = computed(() => componentProps.value.clearable ?? true)
+const dateType = computed(() => componentProps.value.type ?? 'date')
 </script>

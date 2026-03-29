@@ -1,12 +1,8 @@
 <template>
   <el-input-number
+    v-bind="componentProps"
     :model-value="modelValue"
     :disabled="disabled"
-    :placeholder="placeholder"
-    :min="min"
-    :max="max"
-    :step="step"
-    :precision="precision"
     :controls="controls"
     :class="{ 'is-error': error }"
     @update:model-value="$emit('update:modelValue', $event)"
@@ -33,20 +29,14 @@ defineEmits<{
   blur: []
 }>()
 
-const placeholder = computed(() => props.schema?.placeholder)
-const min = computed(
-  () => (props.schema?.componentProps?.min ?? props.schema?.min) as number | undefined
-)
-const max = computed(
-  () => (props.schema?.componentProps?.max ?? props.schema?.max) as number | undefined
-)
-const step = computed(
-  () => (props.schema?.componentProps?.step ?? props.schema?.step) as number | undefined
-)
-const precision = computed(
-  () => (props.schema?.componentProps?.precision ?? props.schema?.precision) as number | undefined
-)
-const controls = computed(
-  () => props.schema?.componentProps?.controls ?? props.schema?.controls ?? true
-)
+const componentProps = computed(() => {
+  const cp = { ...(props.schema?.componentProps ?? {}) }
+  delete cp.modelValue
+  delete cp['model-value']
+  delete cp.disabled
+  delete cp.class
+  return cp
+})
+
+const controls = computed(() => componentProps.value.controls ?? true)
 </script>

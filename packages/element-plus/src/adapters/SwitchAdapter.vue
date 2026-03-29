@@ -1,9 +1,8 @@
 <template>
   <el-switch
+    v-bind="componentProps"
     :model-value="modelValue"
     :disabled="disabled"
-    :active-text="activeText"
-    :inactive-text="inactiveText"
     :class="{ 'is-error': error }"
     @update:model-value="$emit('update:modelValue', $event)"
     @blur="$emit('blur')"
@@ -29,11 +28,12 @@ defineEmits<{
   blur: []
 }>()
 
-const activeText = computed(
-  () => (props.schema?.componentProps?.activeText ?? props.schema?.activeText) as string | undefined
-)
-const inactiveText = computed(
-  () =>
-    (props.schema?.componentProps?.inactiveText ?? props.schema?.inactiveText) as string | undefined
-)
+const componentProps = computed(() => {
+  const cp = { ...(props.schema?.componentProps ?? {}) }
+  delete cp.modelValue
+  delete cp['model-value']
+  delete cp.disabled
+  delete cp.class
+  return cp
+})
 </script>

@@ -1,8 +1,8 @@
 <template>
   <el-checkbox
+    v-bind="componentProps"
     :model-value="modelValue"
     :disabled="disabled"
-    :label="label"
     :class="{ 'is-error': error }"
     @update:model-value="$emit('update:modelValue', $event)"
     @blur="$emit('blur')"
@@ -28,7 +28,12 @@ defineEmits<{
   blur: []
 }>()
 
-const label = computed(
-  () => (props.schema?.componentProps?.label ?? props.schema?.label) as string | undefined
-)
+const componentProps = computed(() => {
+  const cp = { ...(props.schema?.componentProps ?? {}) }
+  delete cp.modelValue
+  delete cp['model-value']
+  delete cp.disabled
+  delete cp.class
+  return cp
+})
 </script>

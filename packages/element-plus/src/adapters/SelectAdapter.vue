@@ -1,8 +1,8 @@
 <template>
   <el-select
+    v-bind="componentProps"
     :model-value="modelValue"
     :disabled="disabled"
-    :placeholder="placeholder"
     :clearable="clearable"
     :class="{ 'is-error': error }"
     @update:model-value="$emit('update:modelValue', $event)"
@@ -31,7 +31,7 @@ interface SelectOption {
 
 const props = defineProps<{
   name: string
-  modelValue: string | number | undefined
+  modelValue: string | number | (string | number)[] | undefined
   schema?: FieldSchema
   error?: string
   touched?: boolean
@@ -39,16 +39,21 @@ const props = defineProps<{
 }>()
 
 defineEmits<{
-  'update:modelValue': [value: string | number | undefined]
+  'update:modelValue': [value: string | number | (string | number)[] | undefined]
   blur: []
 }>()
 
-const placeholder = computed(() => props.schema?.placeholder)
-const clearable = computed(
-  () => props.schema?.componentProps?.clearable ?? props.schema?.clearable ?? true
-)
+const componentProps = computed(() => {
+  const cp = { ...(props.schema?.componentProps ?? {}) }
+  delete cp.modelValue
+  delete cp['model-value']
+  delete cp.disabled
+  delete cp.class
+  return cp
+})
+
+const clearable = computed(() => componentProps.value.clearable ?? true)
 const options = computed<SelectOption[]>(() => {
-  const cp = props.schema?.componentProps
-  return ((cp?.options ?? props.schema?.options) as SelectOption[]) || []
+  return (componentProps.value.options as SelectOption[]) || []
 })
 </script>
