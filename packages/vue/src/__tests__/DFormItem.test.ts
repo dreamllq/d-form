@@ -467,3 +467,59 @@ describe('DFormItem label priority chain', () => {
     expect(label.attributes('style')).toContain('width: auto')
   })
 })
+
+describe('DFormItem gridSpan and inline mode', () => {
+  it('applies grid-column span style when gridSpan is set', () => {
+    const wrapper = mountWithDFormProps(
+      'name',
+      { type: 'string', title: 'Name' },
+      {},
+      { gridSpan: 2 }
+    )
+    const item = wrapper.find('.d-form-item')
+    expect(item.attributes('style')).toContain('grid-column: span 2')
+  })
+
+  it('applies grid-column 1 / -1 when gridSpan is -1', () => {
+    const wrapper = mountWithDFormProps(
+      'name',
+      { type: 'string', title: 'Name' },
+      {},
+      { gridSpan: -1 }
+    )
+    const item = wrapper.find('.d-form-item')
+    expect(item.attributes('style')).toContain('grid-column: 1 / -1')
+  })
+
+  it('applies no grid-column style when gridSpan is not set', () => {
+    const wrapper = mountWithDFormProps('name', { type: 'string', title: 'Name' })
+    const item = wrapper.find('.d-form-item')
+    expect(item.attributes('style')).toBeUndefined()
+  })
+
+  it('applies d-form-item--inline class when layout is inline', () => {
+    const wrapper = mountWithDFormProps(
+      'name',
+      { type: 'string', title: 'Name' },
+      { layout: 'inline' }
+    )
+    const item = wrapper.find('.d-form-item')
+    expect(item.classes()).toContain('d-form-item--inline')
+  })
+
+  it('sets labelWidth to auto in inline mode', () => {
+    const wrapper = mountWithDFormProps(
+      'name',
+      { type: 'string', title: 'Name' },
+      { layout: 'inline', labelWidth: 200 }
+    )
+    const label = wrapper.find('.d-form-item__label')
+    expect(label.attributes('style')).toContain('width: auto')
+  })
+
+  it('does not apply inline class when layout is not inline', () => {
+    const wrapper = mountWithDFormProps('name', { type: 'string', title: 'Name' })
+    const item = wrapper.find('.d-form-item')
+    expect(item.classes()).not.toContain('d-form-item--inline')
+  })
+})
