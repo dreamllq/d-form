@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <h2 class="page-title">Basic Fields</h2>
-    <p class="page-desc">All 8 Element Plus field types rendered via DForm</p>
+    <p class="page-desc">All 18 Element Plus field types rendered via DForm</p>
 
     <div class="form-card">
       <DForm :schema="schema" :initial-values="initialValues" @submit="handleSubmit">
@@ -13,6 +13,16 @@
         <DFormItem name="gender" :schema="schema.properties.gender" />
         <DFormItem name="active" :schema="schema.properties.active" />
         <DFormItem name="agree" :schema="schema.properties.agree" />
+        <DFormItem name="appointmentTime" :schema="schema.properties.appointmentTime" />
+        <DFormItem name="deliveryTime" :schema="schema.properties.deliveryTime" />
+        <DFormItem name="satisfaction" :schema="schema.properties.satisfaction" />
+        <DFormItem name="rating" :schema="schema.properties.rating" />
+        <DFormItem name="favoriteColor" :schema="schema.properties.favoriteColor" />
+        <DFormItem name="region" :schema="schema.properties.region" />
+        <DFormItem name="department" :schema="schema.properties.department" />
+        <DFormItem name="search" :schema="schema.properties.search" />
+        <DFormItem name="hobbies" :schema="schema.properties.hobbies" />
+        <DFormItem name="attachments" :schema="schema.properties.attachments" />
         <el-button type="primary" native-type="submit">Submit</el-button>
       </DForm>
     </div>
@@ -29,6 +39,17 @@ import { ref } from 'vue'
 import { DForm, DFormItem } from '@d-form/vue'
 import type { FormSchema } from '@d-form/shared'
 import { ElButton } from 'element-plus'
+
+const fetchSuggestions = (queryString: string, cb: any) => {
+  const results = [
+    { value: 'Vue' },
+    { value: 'React' },
+    { value: 'Angular' },
+    { value: 'Svelte' },
+    { value: 'Solid' },
+  ].filter((item) => item.value.toLowerCase().includes(queryString.toLowerCase()))
+  cb(results)
+}
 
 const schema: FormSchema = {
   type: 'object',
@@ -69,6 +90,122 @@ const schema: FormSchema = {
     },
     active: { type: 'boolean', component: 'switch', title: 'Active' },
     agree: { type: 'boolean', component: 'checkbox', title: 'Agree' },
+    appointmentTime: {
+      type: 'string',
+      component: 'time-picker',
+      title: 'Appointment Time',
+      componentProps: { placeholder: 'Pick a time' },
+    },
+    deliveryTime: {
+      type: 'string',
+      component: 'time-select',
+      title: 'Delivery Time',
+      componentProps: { start: '08:00', step: '00:30', end: '20:00', placeholder: 'Select time' },
+    },
+    satisfaction: {
+      type: 'number',
+      component: 'slider',
+      title: 'Satisfaction',
+      componentProps: { min: 0, max: 100, step: 5 },
+    },
+    rating: {
+      type: 'number',
+      component: 'rate',
+      title: 'Rating',
+    },
+    favoriteColor: {
+      type: 'string',
+      component: 'color-picker',
+      title: 'Favorite Color',
+    },
+    region: {
+      type: 'array',
+      component: 'cascader',
+      title: 'Region',
+      componentProps: {
+        options: [
+          {
+            value: 'china',
+            label: 'China',
+            children: [
+              {
+                value: 'beijing',
+                label: 'Beijing',
+                children: [
+                  { value: 'haidian', label: 'Haidian' },
+                  { value: 'chaoyang', label: 'Chaoyang' },
+                ],
+              },
+              {
+                value: 'shanghai',
+                label: 'Shanghai',
+                children: [
+                  { value: 'pudong', label: 'Pudong' },
+                  { value: "jing'an", label: "Jing'an" },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    },
+    department: {
+      type: 'string',
+      component: 'tree-select',
+      title: 'Department',
+      componentProps: {
+        data: [
+          {
+            value: 'engineering',
+            label: 'Engineering',
+            children: [
+              { value: 'frontend', label: 'Frontend' },
+              { value: 'backend', label: 'Backend' },
+            ],
+          },
+          {
+            value: 'design',
+            label: 'Design',
+            children: [
+              { value: 'ux', label: 'UX' },
+              { value: 'visual', label: 'Visual' },
+            ],
+          },
+        ],
+      },
+    },
+    search: {
+      type: 'string',
+      component: 'autocomplete',
+      title: 'Search',
+      componentProps: {
+        fetchSuggestions,
+        placeholder: 'Search frameworks...',
+        triggerOnFocus: true,
+      },
+    },
+    hobbies: {
+      type: 'array',
+      component: 'checkbox-group',
+      title: 'Hobbies',
+      componentProps: {
+        options: [
+          { label: 'Reading', value: 'reading' },
+          { label: 'Gaming', value: 'gaming' },
+          { label: 'Music', value: 'music' },
+          { label: 'Sports', value: 'sports' },
+        ],
+      },
+    },
+    attachments: {
+      type: 'array',
+      component: 'upload',
+      title: 'Attachments',
+      componentProps: {
+        action: 'https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15',
+        listType: 'text',
+      },
+    },
   },
 }
 
@@ -81,6 +218,16 @@ const initialValues = {
   gender: '',
   active: false,
   agree: false,
+  appointmentTime: '',
+  deliveryTime: '',
+  satisfaction: 50,
+  rating: 0,
+  favoriteColor: '#409EFF',
+  region: [],
+  department: '',
+  search: '',
+  hobbies: [],
+  attachments: [],
 }
 
 const submittedValues = ref<Record<string, any> | null>(null)
