@@ -2,6 +2,7 @@
 import { provide, reactive, computed } from 'vue'
 import { useForm } from '../composables/useForm'
 import { createFormContext } from '../renderer'
+import DFormItems from './DFormItems.vue'
 import type { FormSchema } from '@d-form/shared'
 
 const props = defineProps<{
@@ -92,6 +93,7 @@ defineExpose({
 
 <template>
   <form :class="formClasses" :style="formStyles" @submit.prevent="handleSubmit">
+    <DFormItems v-if="schema" />
     <slot />
   </form>
 </template>

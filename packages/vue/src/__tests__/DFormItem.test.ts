@@ -14,9 +14,7 @@ function mountWithDFormItem(
 ) {
   const schema: FormSchema = {
     type: 'object',
-    properties: {
-      [name]: fieldSchema || { type: 'string' },
-    },
+    properties: {},
     ...(uiSchema ? { uiSchema } : {}),
   }
 
@@ -47,7 +45,7 @@ function mountWithDFormProps(
 ) {
   const schema: FormSchema = {
     type: 'object',
-    properties: { [name]: fieldSchema },
+    properties: {},
     ...(dFormProps?.uiSchema ? { uiSchema: dFormProps.uiSchema } : {}),
   }
   const { uiSchema: _uiSchema, ...restFormProps } = dFormProps || {}

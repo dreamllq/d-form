@@ -1,8 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { h } from 'vue'
 import DForm from '../components/DForm.vue'
-import DFormItems from '../components/DFormItems.vue'
 import type { FormSchema } from '@d-form/shared'
 
 // Mock ResizeObserver — jsdom doesn't provide it
@@ -29,9 +27,6 @@ function triggerResize(width: number) {
 function mountWithDFormItems(schema?: FormSchema) {
   return mount(DForm, {
     props: { schema },
-    slots: {
-      default: () => h(DFormItems),
-    },
   })
 }
 
