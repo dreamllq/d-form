@@ -39,10 +39,11 @@ const props = defineProps<{
 
 defineEmits<{
   'update:modelValue': [value: string | number | undefined]
-  'blur': []
+  blur: []
 }>()
 
 const options = computed<RadioOption[]>(() => {
-  return (props.schema?.options as RadioOption[]) || []
+  const cp = props.schema?.componentProps
+  return ((cp?.options ?? props.schema?.options) as RadioOption[]) || []
 })
 </script>

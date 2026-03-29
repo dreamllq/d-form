@@ -1,5 +1,11 @@
 import { ref, reactive, onUnmounted, getCurrentInstance, type Ref } from 'vue'
-import { createForm, type Form, type FormOptions, type FormSchema, type FieldSchema } from '@d-form/core'
+import {
+  createForm,
+  type Form,
+  type FormOptions,
+  type FormSchema,
+  type FieldSchema,
+} from '@d-form/core'
 
 export interface UseFormOptions<T extends object = Record<string, any>> extends FormOptions<T> {
   /** Zod schema for validation */
@@ -58,15 +64,20 @@ export function useForm<T extends object = Record<string, any>>(
     ? { schema: schemaOrOptions }
     : (schemaOrOptions as UseFormOptions<T>) || {}
 
+  const userOnValuesChange = options.onValuesChange
+
   const form = createForm({
     initialValues: options.initialValues,
     schema: options.schema,
     onSubmit: options.onSubmit,
-    onValuesChange: options.onValuesChange,
+    onValuesChange: (values: any, path: string) => {
+      syncState()
+      userOnValuesChange?.(values, path)
+    },
     validateOnMount: options.validateOnMount,
     validateOnChange: options.validateOnChange,
     validateOnBlur: options.validateOnBlur,
-    zodSchema: options.zodSchema
+    zodSchema: options.zodSchema,
   } as any)
 
   const values = reactive<T>(form.getValues() as T)
@@ -82,15 +93,15 @@ export function useForm<T extends object = Record<string, any>>(
   const syncState = () => {
     const state = form.getState()
     const formValues = form.getValues()
-    Object.keys(formValues).forEach(key => {
-      (values as any)[key] = formValues[key]
+    Object.keys(formValues).forEach((key) => {
+      ;(values as any)[key] = formValues[key]
     })
     const formErrors = form.getErrors() as Record<string, string>
-    Object.keys(errors).forEach(key => delete errors[key])
-    Object.keys(formErrors).forEach(key => {
+    Object.keys(errors).forEach((key) => delete errors[key])
+    Object.keys(formErrors).forEach((key) => {
       ;(errors as Record<string, string>)[key] = formErrors[key]
     })
-    Object.keys(touched).forEach(key => delete touched[key])
+    Object.keys(touched).forEach((key) => delete touched[key])
     Object.assign(touched, state.touched)
     dirty.value = state.dirty
     submitting.value = state.submitting
@@ -111,7 +122,7 @@ export function useForm<T extends object = Record<string, any>>(
   }
 
   const setValues = (newValues: Partial<T>) => {
-    Object.keys(newValues as object).forEach(key => {
+    Object.keys(newValues as object).forEach((key) => {
       if (!form.hasField(key)) {
         form.registerField(key, { type: 'string' })
       }
@@ -200,7 +211,7 @@ export function useForm<T extends object = Record<string, any>>(
     reset,
     validate,
     clearErrors,
-    getErrors
+    getErrors,
   }
 }
 

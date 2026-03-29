@@ -40,12 +40,15 @@ const props = defineProps<{
 
 defineEmits<{
   'update:modelValue': [value: string | number | undefined]
-  'blur': []
+  blur: []
 }>()
 
 const placeholder = computed(() => props.schema?.placeholder)
-const clearable = computed(() => props.schema?.clearable ?? true)
+const clearable = computed(
+  () => props.schema?.componentProps?.clearable ?? props.schema?.clearable ?? true
+)
 const options = computed<SelectOption[]>(() => {
-  return (props.schema?.options as SelectOption[]) || []
+  const cp = props.schema?.componentProps
+  return ((cp?.options ?? props.schema?.options) as SelectOption[]) || []
 })
 </script>

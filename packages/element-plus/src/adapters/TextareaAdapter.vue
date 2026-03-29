@@ -30,12 +30,20 @@ const props = defineProps<{
 
 defineEmits<{
   'update:modelValue': [value: string]
-  'blur': []
+  blur: []
 }>()
 
 const placeholder = computed(() => props.schema?.placeholder)
-const rows = computed(() => (props.schema?.rows as number) || 2)
-const autosize = computed(() => props.schema?.autosize ?? false)
-const maxlength = computed(() => props.schema?.maxlength as number | undefined)
-const showWordLimit = computed(() => props.schema?.showWordLimit ?? false)
+const rows = computed(
+  () => ((props.schema?.componentProps?.rows ?? props.schema?.rows) as number) || 2
+)
+const autosize = computed(
+  () => props.schema?.componentProps?.autosize ?? props.schema?.autosize ?? false
+)
+const maxlength = computed(
+  () => (props.schema?.componentProps?.maxlength ?? props.schema?.maxlength) as number | undefined
+)
+const showWordLimit = computed(
+  () => props.schema?.componentProps?.showWordLimit ?? props.schema?.showWordLimit ?? false
+)
 </script>

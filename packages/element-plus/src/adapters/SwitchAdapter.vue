@@ -26,9 +26,14 @@ const props = defineProps<{
 
 defineEmits<{
   'update:modelValue': [value: boolean]
-  'blur': []
+  blur: []
 }>()
 
-const activeText = computed(() => props.schema?.activeText as string | undefined)
-const inactiveText = computed(() => props.schema?.inactiveText as string | undefined)
+const activeText = computed(
+  () => (props.schema?.componentProps?.activeText ?? props.schema?.activeText) as string | undefined
+)
+const inactiveText = computed(
+  () =>
+    (props.schema?.componentProps?.inactiveText ?? props.schema?.inactiveText) as string | undefined
+)
 </script>

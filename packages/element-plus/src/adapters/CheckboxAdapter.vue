@@ -25,8 +25,10 @@ const props = defineProps<{
 
 defineEmits<{
   'update:modelValue': [value: boolean]
-  'blur': []
+  blur: []
 }>()
 
-const label = computed(() => props.schema?.label as string | undefined)
+const label = computed(
+  () => (props.schema?.componentProps?.label ?? props.schema?.label) as string | undefined
+)
 </script>

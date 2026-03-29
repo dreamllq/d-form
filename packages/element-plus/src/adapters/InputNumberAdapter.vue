@@ -30,13 +30,23 @@ const props = defineProps<{
 
 defineEmits<{
   'update:modelValue': [value: number | undefined]
-  'blur': []
+  blur: []
 }>()
 
 const placeholder = computed(() => props.schema?.placeholder)
-const min = computed(() => props.schema?.min as number | undefined)
-const max = computed(() => props.schema?.max as number | undefined)
-const step = computed(() => props.schema?.step as number | undefined)
-const precision = computed(() => props.schema?.precision as number | undefined)
-const controls = computed(() => props.schema?.controls ?? true)
+const min = computed(
+  () => (props.schema?.componentProps?.min ?? props.schema?.min) as number | undefined
+)
+const max = computed(
+  () => (props.schema?.componentProps?.max ?? props.schema?.max) as number | undefined
+)
+const step = computed(
+  () => (props.schema?.componentProps?.step ?? props.schema?.step) as number | undefined
+)
+const precision = computed(
+  () => (props.schema?.componentProps?.precision ?? props.schema?.precision) as number | undefined
+)
+const controls = computed(
+  () => props.schema?.componentProps?.controls ?? props.schema?.controls ?? true
+)
 </script>
