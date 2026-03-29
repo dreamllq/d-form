@@ -12,18 +12,27 @@ const props = defineProps<{
 
 const formContext = inject<any>('d-form')
 
-const { value, error, touched, setValue, setTouched, validate } = useField(
-  props.name,
-  formContext?.form,
-  { schema: props.schema }
-)
+const {
+  value,
+  error,
+  touched,
+  disabled: fieldDisabled,
+  setValue,
+  setTouched,
+  validate,
+} = useField(props.name, formContext?.form, { schema: props.schema })
 
 const fieldValue = computed({
   get: () => value.value,
-  set: (val) => setValue(val)
+  set: (val) => setValue(val),
 })
 
 const fieldError = computed(() => error.value)
+
+const effectiveDisabled = computed(() => {
+  if (props.disabled !== undefined) return props.disabled
+  return fieldDisabled.value
+})
 
 const renderComponent = computed(() => {
   if (typeof props.component === 'object') {
@@ -41,7 +50,7 @@ defineExpose({
   validate,
   value,
   error,
-  touched
+  touched,
 })
 </script>
 
@@ -52,7 +61,7 @@ defineExpose({
     :name="name"
     :error="fieldError"
     :touched="touched"
-    :disabled="disabled"
+    :disabled="effectiveDisabled"
     :schema="schema"
     @blur="handleBlur"
   />

@@ -34,7 +34,7 @@ export interface UseFieldReturn<T = any> {
 
 /**
  * Vue composable for managing individual field state
- * 
+ *
  * @example
  * ```ts
  * const { value, error, setValue, validate } = useField('email', form)
@@ -46,7 +46,7 @@ export function useField<T = any>(
   options?: UseFieldOptions
 ): UseFieldReturn<T> {
   const field: Field | undefined = form.getField(path) || form.registerField(path, options?.schema)
-  
+
   const value: Ref<T> = ref<T>(field?.getValue() as T) as Ref<T>
   const error = ref<string | undefined>(field?.getError())
   const touched = ref(field?.getState().touched ?? false)
@@ -85,6 +85,7 @@ export function useField<T = any>(
     })
 
     unsubscribeStateChange = field.on('stateChange', (state: FieldState) => {
+      value.value = state.value
       error.value = state.error
       touched.value = state.touched
       dirty.value = state.dirty
