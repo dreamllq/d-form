@@ -13,6 +13,7 @@
           <router-link to="/form-layout" class="nav-link">Form Layout</router-link>
           <router-link to="/layout" class="nav-link">Layout</router-link>
           <router-link to="/custom-registry" class="nav-link">Custom Registry</router-link>
+          <router-link to="/ai2form" class="nav-link">AI → Form</router-link>
         </nav>
       </aside>
       <main class="app-main">

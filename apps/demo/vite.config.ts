@@ -11,6 +11,7 @@ export default defineConfig({
       '@d-form/core': path.resolve(__dirname, '../../packages/core/src/index.ts'),
       '@d-form/element-plus': path.resolve(__dirname, '../../packages/element-plus/src/index.ts'),
       '@d-form/schema-editor': path.resolve(__dirname, '../../packages/schema-editor/src/index.ts'),
+      '@d-form/agent': path.resolve(__dirname, '../../packages/agent/src/index.ts'),
     },
   },
   server: { port: 5173 },

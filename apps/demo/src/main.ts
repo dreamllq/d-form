@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
+import '@ai-chat/vue/style.css'
 import { registerElementPlusComponents } from '@d-form/element-plus'
 import { registerComponent } from '@d-form/vue'
 import RatingInputAdapter from './components/RatingInputAdapter.vue'

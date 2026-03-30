@@ -48,8 +48,11 @@ importers:
   apps/demo:
     dependencies:
       '@ai-chat/vue':
-        specifier: D:\github-my\ai-chat\packages\ai-chat
+        specifier: ../../../ai-chat/packages/ai-chat
         version: link:../../../ai-chat/packages/ai-chat
+      '@d-form/agent':
+        specifier: workspace:*
+        version: link:../../packages/agent
       '@d-form/core':
         specifier: workspace:*
         version: link:../../packages/core
