@@ -3,7 +3,7 @@ import { computed, watch, toRef } from 'vue'
 import { useSchemaSync } from '../composables/useSchemaSync'
 import type { FormSchema } from '@d-form/shared'
 import MonacoEditor from '@guolao/vue-monaco-editor'
-import { DForm, DFormItems } from '@d-form/vue'
+import { DForm } from '@d-form/vue'
 import generatedSchema from '../../dist/form-schema.json'
 
 const props = defineProps<{
@@ -83,9 +83,7 @@ const schemaKey = computed(() => JSON.stringify(parsedSchema.value))
     </div>
     <!-- Preview panel -->
     <div v-show="activeTab === 'preview'" class="schema-editor__preview">
-      <DForm v-if="parsedSchema" :schema="parsedSchema" :key="schemaKey">
-        <DFormItems />
-      </DForm>
+      <DForm v-if="parsedSchema" :schema="parsedSchema" :key="schemaKey" />
       <div v-if="parseError" class="schema-editor__error">
         {{ parseError }}
       </div>
