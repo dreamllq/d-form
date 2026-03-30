@@ -25,6 +25,7 @@
     { "path": "./packages/core" },
     { "path": "./packages/vue" },
     { "path": "./packages/element-plus" },
+    { "path": "./packages/schema-editor" },
     { "path": "./apps/demo" }
   ]
 }

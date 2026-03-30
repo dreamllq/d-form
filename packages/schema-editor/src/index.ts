@@ -1,0 +1,5 @@
+export { default as SchemaEditor } from './components/SchemaEditor.vue'
+export { useSchemaSync } from './composables/useSchemaSync'
+export type { UseSchemaSyncReturn } from './composables/useSchemaSync'
+export { parseSchema, schemaToJson, validateSchemaStructure } from './composables/useSchemaParser'
+export type { ParseResult } from './composables/useSchemaParser'

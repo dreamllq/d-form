@@ -1,0 +1,54 @@
+{
+  "name": "@d-form/schema-editor",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsx scripts/generate-schema.ts && vite build",
+    "type-check": "vue-tsc --noEmit",
+    "test": "vitest run",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "@d-form/shared": "workspace:*",
+    "@d-form/vue": "workspace:*"
+  },
+  "peerDependencies": {
+    "vue": "^3.4.0",
+    "@guolao/vue-monaco-editor": "^1.x",
+    "monaco-editor": "^0.45.0"
+  },
+  "devDependencies": {
+    "@d-form/shared": "workspace:*",
+    "@d-form/vue": "workspace:*",
+    "@vitejs/plugin-vue": "^5.2.3",
+    "vitest": "^3.1.1",
+    "jsdom": "^26.0.0",
+    "@vue/test-utils": "^2.4.6",
+    "@vue/compiler-sfc": "^3.5.13",
+    "typescript": "^5.8.2",
+    "vue": "^3.5.13",
+    "vue-tsc": "^2.2.8",
+    "ts-json-schema-generator": "^0.97.0",
+    "tsx": "^4.19.0",
+    "vite": "^6.2.4"
+  }
+}
