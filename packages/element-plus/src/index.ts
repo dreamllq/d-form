@@ -1,4 +1,6 @@
 export * from '@d-form/vue'
+export { elementPlusRegistry } from './schemas'
+export * from './schemas'
 
 import { registerComponent } from '@d-form/vue'
 import InputAdapter from './adapters/InputAdapter.vue'
