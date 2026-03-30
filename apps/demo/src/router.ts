@@ -5,6 +5,7 @@ import LinkagePage from './pages/LinkagePage.vue'
 import SchemaEditorPage from './pages/SchemaEditorPage.vue'
 import FormLayoutPage from './pages/FormLayoutPage.vue'
 import LayoutPage from './pages/LayoutPage.vue'
+import CustomRegistryPage from './pages/CustomRegistryPage.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -16,6 +17,7 @@ const router = createRouter({
     { path: '/schema-editor', component: SchemaEditorPage },
     { path: '/form-layout', component: FormLayoutPage },
     { path: '/layout', component: LayoutPage },
+    { path: '/custom-registry', component: CustomRegistryPage },
   ],
 })
 

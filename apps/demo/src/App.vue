@@ -12,6 +12,7 @@
           <router-link to="/schema-editor" class="nav-link">Schema Editor</router-link>
           <router-link to="/form-layout" class="nav-link">Form Layout</router-link>
           <router-link to="/layout" class="nav-link">Layout</router-link>
+          <router-link to="/custom-registry" class="nav-link">Custom Registry</router-link>
         </nav>
       </aside>
       <main class="app-main">
