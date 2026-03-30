@@ -1,5 +1,5 @@
-import { z } from 'zod'
-import { FormSchema } from '@d-form/shared'
+import type { z } from 'zod'
+import type { FormSchema } from '@d-form/shared'
 
 type Listener<T> = (data: T) => void
 

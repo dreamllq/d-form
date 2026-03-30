@@ -1,5 +1,5 @@
-import { z } from 'zod'
-import { type ComponentPropsRegistry, FormSchema, assembleFormSchema } from '@d-form/shared'
+import { type ComponentPropsRegistry, type FormSchema, assembleFormSchema } from '@d-form/shared'
+import type { z } from 'zod'
 import type { FormAgentBus } from '../bus'
 import type { StructuredToolDefinition } from '../types'
 
