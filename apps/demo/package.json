@@ -13,6 +13,9 @@
     "@d-form/core": "workspace:*",
     "@d-form/vue": "workspace:*",
     "@d-form/element-plus": "workspace:*",
+    "@d-form/schema-editor": "workspace:*",
+    "@guolao/vue-monaco-editor": "^1.2.0",
+    "monaco-editor": "^0.45.0",
     "element-plus": "^2.9.1",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
