@@ -6,12 +6,20 @@
     <div class="form-card">
       <DForm :schema="schema" @submit="handleSubmit">
         <el-button type="primary" native-type="submit">Submit</el-button>
+        <el-button type="default" @click="showZodSchema = !showZodSchema" style="margin-left: 12px">
+          {{ showZodSchema ? 'Hide Zod Schema' : 'Print Zod Schema' }}
+        </el-button>
       </DForm>
     </div>
 
     <div v-if="submittedValues" class="result-card">
       <h3>Submitted Values</h3>
       <pre>{{ JSON.stringify(submittedValues, null, 2) }}</pre>
+    </div>
+
+    <div v-if="showZodSchema" class="result-card">
+      <h3>Merged Registry — Zod Schemas (JSON Schema)</h3>
+      <pre>{{ JSON.stringify(zodSchemas, null, 2) }}</pre>
     </div>
 
     <div class="info-card">
@@ -35,12 +43,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { DForm } from '@d-form/vue'
 import { defineFormSchema, defineComponentRegistry } from '@d-form/shared'
 import { elementPlusRegistry } from '@d-form/element-plus'
 import { customRegistry } from '../schemas'
 import { ElButton } from 'element-plus'
+import { z } from 'zod'
+
+const showZodSchema = ref(false)
 
 const demoRegistry = defineComponentRegistry({
   ...elementPlusRegistry,
@@ -83,10 +94,6 @@ const schema = defineFormSchema(demoRegistry, {
 })
 
 const submittedValues = ref<Record<string, any> | null>(null)
-
-const handleSubmit = (values: any) => {
-  submittedValues.value = values
-}
 </script>
 
 <style scoped>
