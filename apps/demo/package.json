@@ -14,6 +14,7 @@
     "@d-form/vue": "workspace:*",
     "@d-form/element-plus": "workspace:*",
     "@d-form/schema-editor": "workspace:*",
+    "@ai-chat/vue":"D:\\github-my\\ai-chat\\packages\\ai-chat",
     "@guolao/vue-monaco-editor": "^1.2.0",
     "monaco-editor": "^0.45.0",
     "element-plus": "^2.9.1",

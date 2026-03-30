@@ -1,7 +1,7 @@
 lockfileVersion: '9.0'
 
 settings:
-  autoInstallPeers: true
+  autoInstallPeers: false
   excludeLinksFromLockfile: false
 
 importers:
@@ -47,6 +47,9 @@ importers:
 
   apps/demo:
     dependencies:
+      '@ai-chat/vue':
+        specifier: D:\github-my\ai-chat\packages\ai-chat
+        version: link:../../../ai-chat/packages/ai-chat
       '@d-form/core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -90,6 +93,25 @@ importers:
       vite:
         specifier: ^6.4.1
         version: 6.4.1(@types/node@22.19.15)(tsx@4.21.0)
+
+  packages/agent:
+    dependencies:
+      '@d-form/shared':
+        specifier: workspace:*
+        version: link:../shared
+    devDependencies:
+      '@d-form/element-plus':
+        specifier: workspace:*
+        version: link:../element-plus
+      '@vitest/coverage-v8':
+        specifier: ^1.6.1
+        version: 1.6.1(vitest@1.6.1(@types/node@22.19.15)(jsdom@29.0.1))
+      vitest:
+        specifier: ^1.6.1
+        version: 1.6.1(@types/node@22.19.15)(jsdom@29.0.1)
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
 
   packages/core:
     dependencies:
@@ -146,12 +168,6 @@ importers:
       '@d-form/vue':
         specifier: workspace:*
         version: link:../vue
-      '@guolao/vue-monaco-editor':
-        specifier: ^1.x
-        version: 1.6.0(monaco-editor@0.45.0)(vue@3.5.31(typescript@5.9.3))
-      monaco-editor:
-        specifier: ^0.45.0
-        version: 0.45.0
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.2.3
