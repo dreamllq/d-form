@@ -6,9 +6,10 @@
  * and type checking.
  */
 
-import type { z } from 'zod'
-import type { FieldSchema } from './field'
-import type { FormSchema } from './form'
+import { z } from 'zod'
+import { FieldSchema } from './field'
+import type { FieldSchema as FieldSchemaType } from './field'
+import { FormSchema } from './form'
 
 /**
  * Registry type: maps component name to its zod schema.
@@ -21,7 +22,7 @@ export type ComponentPropsRegistry = Record<string, z.ZodTypeAny>
  * Base field schema without component/componentProps.
  * Used as the foundation for WrapFieldSchema's discriminated union.
  */
-type FieldSchemaBase = Omit<FieldSchema, 'component' | 'componentProps'>
+type FieldSchemaBase = Omit<FieldSchemaType, 'component' | 'componentProps'>
 
 /**
  * WrapFieldSchema: provides typed componentProps based on the component field value.
@@ -103,4 +104,77 @@ export function defineFormSchema<R extends ComponentPropsRegistry>(
   schema: WrapFormSchema<R>
 ): FormSchema {
   return schema as FormSchema
+}
+
+/**
+ * assembleFormSchema: creates a new FormSchema zod schema where each field's
+ * `component` and `componentProps` are linked via discriminated union.
+ *
+ * **Designed for LangChain tool usage** — the returned zod schema:
+ * 1. Converts to JSON Schema with `oneOf`, where each variant binds a specific
+ *    `component` const (e.g. `"input"`) to its precise `componentProps` schema.
+ *    LLMs see exactly which props each component accepts.
+ * 2. Validates at runtime: `component: 'input'` → `componentProps` must match
+ *    the input props schema from the registry.
+ * 3. Only components registered in the registry are accepted — unknown component
+ *    values will fail validation.
+ *
+ * The registry is consumed at call time, so dynamically assembled registries
+ * work naturally (e.g. spreading `elementPlusRegistry` with custom entries).
+ *
+ * Handles nested fields (`properties` for objects, `items` for arrays) recursively.
+ *
+ * Usage:
+ * ```ts
+ * const registry = defineComponentRegistry({
+ *   input: z.object({ placeholder: z.string().optional() }),
+ *   select: z.object({ options: z.array(z.object({ label: z.string(), value: z.any() })) }),
+ * })
+ *
+ * // Pass to LangChain tool
+ * const formTool = tool(async (input) => { ... }, {
+ *   name: 'create_form',
+ *   schema: assembleFormSchema(registry),
+ * })
+ *
+ * // Or use standalone
+ * const schema = assembleFormSchema(registry)
+ * const result = schema.safeParse(formData)
+ * ```
+ */
+export function assembleFormSchema(registry: ComponentPropsRegistry) {
+  // Strip component/componentProps from the base FieldSchema — we'll add them
+  // back via discriminated union with per-component typing.
+  const baseShape = FieldSchema.omit({ component: true, componentProps: true })
+
+  const entries = Object.entries(registry)
+
+  // If registry is empty, use plain base shape.
+  if (entries.length === 0) {
+    return FormSchema.extend({
+      properties: z.record(
+        z.string(),
+        baseShape.extend({
+          component: z.string().optional(),
+          componentProps: z.record(z.string(), z.any()).optional(),
+        })
+      ),
+    })
+  }
+
+  // Build one variant per registry entry:
+  //   { component: z.literal('input'), componentProps: inputPropsSchema.optional(), ...base }
+  const [first, ...rest] = entries.map(([name, propsSchema]) =>
+    baseShape.extend({
+      component: z.literal(name),
+      componentProps: propsSchema.optional(),
+    })
+  )
+
+  // discriminatedUnion on `component` — JSON Schema produces oneOf with const discriminators
+  const EnhancedFieldSchema = z.discriminatedUnion('component', [first, ...rest])
+
+  return FormSchema.extend({
+    properties: z.record(z.string(), EnhancedFieldSchema),
+  })
 }

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { z } from 'zod'
-import { defineComponentRegistry, defineFormSchema } from '../types'
+import { defineComponentRegistry, defineFormSchema, assembleFormSchema } from '../types'
 import type { WrapFieldSchema, ComponentPropsRegistry } from '../types'
 
 // Helper for compile-time type checking — if this function accepts the value,
@@ -265,5 +265,224 @@ describe('ComponentPropsRegistry type', () => {
     expect(reg['date-picker'].parse({ format: 'YYYY-MM-DD' })).toEqual({
       format: 'YYYY-MM-DD',
     })
+  })
+})
+
+describe('assembleFormSchema', () => {
+  const registry = defineComponentRegistry({
+    input: z.object({
+      placeholder: z.string().optional(),
+      clearable: z.boolean().optional(),
+    }),
+    select: z.object({
+      options: z.array(z.object({ label: z.string(), value: z.any() })),
+      multiple: z.boolean().optional(),
+    }),
+  })
+
+  it('passes valid form schema with correct componentProps', () => {
+    const schema = assembleFormSchema(registry)
+
+    const result = schema.safeParse({
+      type: 'object',
+      properties: {
+        name: {
+          type: 'string',
+          component: 'input',
+          componentProps: { placeholder: 'Enter name' },
+        },
+        role: {
+          type: 'string',
+          component: 'select',
+          componentProps: {
+            options: [{ label: 'Admin', value: 'admin' }],
+          },
+        },
+      },
+    })
+
+    expect(result.success).toBe(true)
+  })
+
+  it('passes when componentProps is omitted', () => {
+    const schema = assembleFormSchema(registry)
+
+    const result = schema.safeParse({
+      type: 'object',
+      properties: {
+        name: { type: 'string', component: 'input' },
+      },
+    })
+
+    expect(result.success).toBe(true)
+  })
+
+  it('rejects unknown component (not in registry)', () => {
+    const schema = assembleFormSchema(registry)
+
+    const result = schema.safeParse({
+      type: 'object',
+      properties: {
+        custom: {
+          type: 'string',
+          component: 'custom-widget',
+          componentProps: { anything: 'goes' },
+        },
+      },
+    })
+
+    // discriminatedUnion only accepts registered component values
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects field without component (discriminatedUnion requires discriminator)', () => {
+    const schema = assembleFormSchema(registry)
+
+    const result = schema.safeParse({
+      type: 'object',
+      properties: {
+        hidden: { type: 'string' },
+      },
+    })
+
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects invalid componentProps for known component', () => {
+    const schema = assembleFormSchema(registry)
+
+    const result = schema.safeParse({
+      type: 'object',
+      properties: {
+        name: {
+          type: 'string',
+          component: 'input',
+          componentProps: { placeholder: 123 }, // should be string
+        },
+      },
+    })
+
+    expect(result.success).toBe(false)
+    if (!result.success) {
+      const paths = result.error.issues.map((i) => i.path.join('.'))
+      expect(paths.some((p) => p.includes('componentProps'))).toBe(true)
+    }
+  })
+
+  it('reports correct error path for nested componentProps', () => {
+    const schema = assembleFormSchema(registry)
+
+    const result = schema.safeParse({
+      type: 'object',
+      properties: {
+        role: {
+          type: 'string',
+          component: 'select',
+          componentProps: {
+            options: 'not-an-array', // should be array
+          },
+        },
+      },
+    })
+
+    expect(result.success).toBe(false)
+    if (!result.success) {
+      const paths = result.error.issues.map((i) => i.path.join('.'))
+      expect(paths.some((p) => p.includes('componentProps.options'))).toBe(true)
+    }
+  })
+
+  it('reports multiple errors across fields', () => {
+    const schema = assembleFormSchema(registry)
+
+    const result = schema.safeParse({
+      type: 'object',
+      properties: {
+        name: {
+          type: 'string',
+          component: 'input',
+          componentProps: { placeholder: 123 }, // invalid
+        },
+        role: {
+          type: 'string',
+          component: 'select',
+          componentProps: { options: 'not-array' }, // invalid
+        },
+      },
+    })
+
+    expect(result.success).toBe(false)
+    if (!result.success) {
+      expect(result.error.issues.length).toBeGreaterThanOrEqual(2)
+    }
+  })
+
+  it('passes empty componentProps object for component with all-optional schema', () => {
+    const schema = assembleFormSchema(registry)
+
+    const result = schema.safeParse({
+      type: 'object',
+      properties: {
+        name: {
+          type: 'string',
+          component: 'input',
+          componentProps: {},
+        },
+      },
+    })
+
+    expect(result.success).toBe(true)
+  })
+
+  it('still rejects invalid FormSchema structure (base validation)', () => {
+    const schema = assembleFormSchema(registry)
+
+    const result = schema.safeParse({
+      // missing 'type' field
+      properties: {
+        name: { type: 'string' },
+      },
+    })
+
+    expect(result.success).toBe(false)
+  })
+
+  it('works with empty registry (falls back to generic string component)', () => {
+    const emptyRegistry = defineComponentRegistry({})
+    const schema = assembleFormSchema(emptyRegistry)
+
+    const result = schema.safeParse({
+      type: 'object',
+      properties: {
+        name: { type: 'string', component: 'input', componentProps: { anything: true } },
+      },
+    })
+
+    // Empty registry uses generic component: string, componentProps: Record<string,any>
+    expect(result.success).toBe(true)
+  })
+
+  it('preserves form-level fields (title, uiSchema, etc.) through validation', () => {
+    const schema = assembleFormSchema(registry)
+
+    const result = schema.safeParse({
+      type: 'object',
+      properties: {
+        name: {
+          type: 'string',
+          component: 'input',
+          componentProps: { placeholder: 'Name' },
+        },
+      },
+      title: 'Test Form',
+      description: 'A form',
+      uiSchema: { layout: 'vertical', labelWidth: '100px' },
+    })
+
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.title).toBe('Test Form')
+      expect(result.data.uiSchema?.layout).toBe('vertical')
+    }
   })
 })
