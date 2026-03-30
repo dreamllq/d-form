@@ -6,7 +6,9 @@ import { z } from 'zod'
 import { ReactionConfig } from './reaction'
 import { ValidationConfig, type ValidationResult } from './validation'
 
-export const FieldType = z.enum(['string', 'number', 'boolean', 'object', 'array', 'date', 'void'])
+export const FieldType = z
+  .enum(['string', 'number', 'boolean', 'object', 'array', 'date', 'void'])
+  .describe('字段类型')
 
 export type FieldType = z.infer<typeof FieldType>
 
@@ -16,47 +18,29 @@ export type FieldType = z.infer<typeof FieldType>
  * `reactions` references ReactionConfig from ./reaction (circular module dep, safe via ESM live bindings).
  */
 export const FieldSchema = z.object({
-  /** Field type */
-  type: z.string(),
-  /** Field key/path */
-  key: z.string().optional(),
-  /** Field label/title */
-  title: z.string().optional(),
-  /** Field description/help text */
-  description: z.string().optional(),
-  /** Default value */
-  default: z.any().optional(),
-  /** Component name to render */
-  component: z.string().optional(),
-  /** Component props */
-  componentProps: z.record(z.string(), z.any()).optional(),
-  /** Validation configuration */
-  validation: ValidationConfig.optional(),
-  /** Reaction configuration */
+  type: z.string().describe('字段类型'),
+  key: z.string().optional().describe('字段键名/路径'),
+  title: z.string().optional().describe('字段标签/标题'),
+  description: z.string().optional().describe('字段描述/帮助文本'),
+  default: z.any().optional().describe('默认值'),
+  component: z.string().optional().describe('渲染组件名称'),
+  componentProps: z.record(z.string(), z.any()).optional().describe('组件属性'),
+  validation: ValidationConfig.optional().describe('验证配置'),
   get reactions() {
-    return z.array(ReactionConfig).optional()
+    return z.array(ReactionConfig).optional().describe('字段联动配置')
   },
-  /** Field visibility */
-  visible: z.boolean().optional(),
-  /** Field disabled state */
-  disabled: z.boolean().optional(),
-  /** Field placeholder */
-  placeholder: z.string().optional(),
-  /** Label position override for this field */
-  labelPosition: z.enum(['left', 'right', 'top']).optional(),
-  /** Label width override for this field (e.g. '100px', 100) */
-  labelWidth: z.union([z.string(), z.number()]).optional(),
-  /** Field required marker */
-  required: z.boolean().optional(),
-  /** Custom enum values */
-  enum: z.array(z.any()).optional(),
-  /** Nested properties (for object type) */
+  visible: z.boolean().optional().describe('字段是否可见'),
+  disabled: z.boolean().optional().describe('字段是否禁用'),
+  placeholder: z.string().optional().describe('字段占位文本'),
+  labelPosition: z.enum(['left', 'right', 'top']).optional().describe('标签位置'),
+  labelWidth: z.union([z.string(), z.number()]).optional().describe('标签宽度'),
+  required: z.boolean().optional().describe('是否必填'),
+  enum: z.array(z.any()).optional().describe('枚举值列表'),
   get properties() {
-    return z.record(z.string(), FieldSchema).optional()
+    return z.record(z.string(), FieldSchema).optional().describe('嵌套属性（对象类型）')
   },
-  /** Array items schema (for array type) */
   get items() {
-    return FieldSchema.optional()
+    return FieldSchema.optional().describe('数组项 schema')
   },
 })
 
@@ -67,24 +51,15 @@ export const FieldSchema = z.object({
 export type FieldSchema<T = any> = Omit<z.infer<typeof FieldSchema>, 'default'> & { default?: T }
 
 export const FieldState = z.object({
-  /** Current field value */
-  value: z.any(),
-  /** Validation error message */
-  error: z.string().optional(),
-  /** Field has been touched/blurred */
-  touched: z.boolean(),
-  /** Field value has been modified */
-  dirty: z.boolean(),
-  /** Field visibility state */
-  visible: z.boolean(),
-  /** Field disabled state */
-  disabled: z.boolean(),
-  /** Field is currently being validated */
-  validating: z.boolean(),
-  /** Field is currently loading (async data) */
-  loading: z.boolean().optional(),
-  /** Custom display value (different from actual value) */
-  displayValue: z.any().optional(),
+  value: z.any().describe('当前字段值'),
+  error: z.string().optional().describe('验证错误消息'),
+  touched: z.boolean().describe('字段是否已触碰'),
+  dirty: z.boolean().describe('字段值是否已修改'),
+  visible: z.boolean().describe('字段可见状态'),
+  disabled: z.boolean().describe('字段禁用状态'),
+  validating: z.boolean().describe('字段是否正在验证中'),
+  loading: z.boolean().optional().describe('字段是否正在加载中'),
+  displayValue: z.any().optional().describe('自定义显示值'),
 })
 
 export type FieldState<T = any> = Omit<z.infer<typeof FieldState>, 'value' | 'displayValue'> & {
@@ -93,16 +68,11 @@ export type FieldState<T = any> = Omit<z.infer<typeof FieldState>, 'value' | 'di
 }
 
 export const FieldMeta = z.object({
-  /** Field path */
-  path: z.string(),
-  /** Field name */
-  name: z.string(),
-  /** Field schema reference */
-  schema: FieldSchema,
-  /** Parent field path */
-  parentPath: z.string().optional(),
-  /** Field depth in form */
-  depth: z.number(),
+  path: z.string().describe('字段路径'),
+  name: z.string().describe('字段名称'),
+  schema: FieldSchema.describe('字段 schema 引用'),
+  parentPath: z.string().optional().describe('父字段路径'),
+  depth: z.number().describe('字段层级深度'),
 })
 
 export type FieldMeta = z.infer<typeof FieldMeta>

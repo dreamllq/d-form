@@ -9,50 +9,29 @@ import { ReactionSchema } from './reaction'
 import { FormValidationResult } from './validation'
 
 export const UISchema = z.object({
-  /** Form layout direction */
-  layout: z.enum(['vertical', 'inline']).optional(),
-  /** Label width (e.g., '100px', 100) */
-  labelWidth: z.union([z.string(), z.number()]).optional(),
-  /** Gutter between fields */
-  gutter: z.number().optional(),
-  /** Number of columns in grid layout */
-  columns: z.number().optional(),
-  /** Form size */
-  size: z.enum(['small', 'default', 'large']).optional(),
-  /** Label position */
-  labelPosition: z.enum(['left', 'right', 'top']).optional(),
-  /** Show colon after label */
-  colon: z.boolean().optional(),
-  /** Show required asterisk */
-  showRequiredAsterisk: z.boolean().optional(),
-  /** Grid layout configuration */
-  grid: GridConfig.optional(),
-  /** Minimum number of columns */
-  minColumns: z.number().optional(),
+  layout: z.enum(['vertical', 'inline']).optional().describe('表单布局方向'),
+  labelWidth: z.union([z.string(), z.number()]).optional().describe('标签宽度'),
+  gutter: z.number().optional().describe('字段间距'),
+  columns: z.number().optional().describe('栅格列数'),
+  size: z.enum(['small', 'default', 'large']).optional().describe('表单尺寸'),
+  labelPosition: z.enum(['left', 'right', 'top']).optional().describe('标签位置'),
+  colon: z.boolean().optional().describe('是否在标签后显示冒号'),
+  showRequiredAsterisk: z.boolean().optional().describe('是否显示必填星号'),
+  grid: GridConfig.optional().describe('栅格布局配置'),
+  minColumns: z.number().optional().describe('最小列数'),
 })
 
 export type UISchema = z.infer<typeof UISchema>
 
 export const FormSchema = z.object({
-  /** Schema type (always 'object' for forms) */
-  type: z.literal('object'),
-  /** Form field schemas */
-  properties: z.record(z.string(), FieldSchema),
-  /** UI configuration */
-  uiSchema: UISchema.optional(),
-  /** Form-level reactions */
-  reactions: z.array(ReactionSchema).optional(),
-  /** Form title */
-  title: z.string().optional(),
-  /** Form description */
-  description: z.string().optional(),
-  /** Default form values */
-  default: z.record(z.string(), z.any()).optional(),
-  /**
-   * Expression scope — variables available inside {{}} expressions.
-   * e.g. `{ cityMap }` lets reactions reference `{{cityMap[$deps[0]]}}`
-   */
-  scope: z.record(z.string(), z.any()).optional(),
+  type: z.literal('object').describe('schema 类型（表单固定为 object）'),
+  properties: z.record(z.string(), FieldSchema).describe('表单字段 schema'),
+  uiSchema: UISchema.optional().describe('UI 配置'),
+  reactions: z.array(ReactionSchema).optional().describe('表单级别联动'),
+  title: z.string().optional().describe('表单标题'),
+  description: z.string().optional().describe('表单描述'),
+  default: z.record(z.string(), z.any()).optional().describe('默认表单值'),
+  scope: z.record(z.string(), z.any()).optional().describe('表达式作用域变量'),
 })
 
 /**
@@ -64,24 +43,15 @@ export type FormSchema<T = Record<string, any>> = Omit<z.infer<typeof FormSchema
 }
 
 export const FormState = z.object({
-  /** Form values */
-  values: z.record(z.string(), z.any()),
-  /** Field-level errors */
-  errors: z.record(z.string(), z.string().optional()).optional(),
-  /** Field-level touched state */
-  touched: z.record(z.string(), z.boolean().optional()).optional(),
-  /** Form has been modified */
-  dirty: z.boolean(),
-  /** Form is submitting */
-  submitting: z.boolean(),
-  /** Form is valid (no errors) */
-  isValid: z.boolean(),
-  /** Form is validating */
-  validating: z.boolean(),
-  /** Form has been submitted at least once */
-  submitted: z.boolean(),
-  /** Form submission count */
-  submitCount: z.number(),
+  values: z.record(z.string(), z.any()).describe('表单值'),
+  errors: z.record(z.string(), z.string().optional()).optional().describe('字段级别错误'),
+  touched: z.record(z.string(), z.boolean().optional()).optional().describe('字段级别触碰状态'),
+  dirty: z.boolean().describe('表单是否已修改'),
+  submitting: z.boolean().describe('表单是否正在提交'),
+  isValid: z.boolean().describe('表单是否有效'),
+  validating: z.boolean().describe('表单是否正在验证'),
+  submitted: z.boolean().describe('表单是否已提交'),
+  submitCount: z.number().describe('表单提交次数'),
 })
 
 /**
@@ -141,20 +111,13 @@ export interface FormInstance<T = Record<string, any>> {
 }
 
 export const FormOptions = z.object({
-  /** Form schema */
-  schema: FormSchema.optional(),
-  /** Initial values */
-  initialValues: z.record(z.string(), z.any()).optional(),
-  /** onSubmit callback */
-  onSubmit: z.any().optional(),
-  /** onValuesChange callback */
-  onValuesChange: z.any().optional(),
-  /** Validate on mount */
-  validateOnMount: z.boolean().optional(),
-  /** Validate on change */
-  validateOnChange: z.boolean().optional(),
-  /** Validate on blur */
-  validateOnBlur: z.boolean().optional(),
+  schema: FormSchema.optional().describe('表单 schema'),
+  initialValues: z.record(z.string(), z.any()).optional().describe('初始值'),
+  onSubmit: z.any().optional().describe('提交回调'),
+  onValuesChange: z.any().optional().describe('值变更回调'),
+  validateOnMount: z.boolean().optional().describe('挂载时验证'),
+  validateOnChange: z.boolean().optional().describe('变更时验证'),
+  validateOnBlur: z.boolean().optional().describe('失焦时验证'),
 })
 
 /**

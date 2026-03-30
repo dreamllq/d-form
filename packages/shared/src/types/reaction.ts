@@ -7,74 +7,57 @@ import { z } from 'zod'
 import { FieldSchema, FieldState } from './field'
 
 export const ReactionEffect = z.object({
-  /** State changes to apply */
   get state() {
-    return FieldState.partial().optional()
+    return FieldState.partial().optional().describe('要应用的状态变更')
   },
-  /** Schema changes to apply */
   get schema() {
-    return FieldSchema.partial().optional()
+    return FieldSchema.partial().optional().describe('要应用的 schema 变更')
   },
-  /** Custom action to execute (expression string) */
-  run: z.string().optional(),
+  run: z.string().optional().describe('自定义执行动作（表达式字符串）'),
 })
 
 export type ReactionEffect = z.infer<typeof ReactionEffect>
 
 export const ReactionConfig = z.object({
-  /** Field paths this reaction depends on */
-  dependencies: z.array(z.string()).optional(),
-  /** Target field(s) to affect */
-  target: z.union([z.string(), z.array(z.string())]).optional(),
-  /** Condition expression (when to apply fulfill) */
-  when: z.string().optional(),
-  /** Effect to apply when condition is true */
-  fulfill: ReactionEffect.optional(),
-  /** Effect to apply when condition is false */
-  otherwise: ReactionEffect.optional(),
+  dependencies: z.array(z.string()).optional().describe('依赖的字段路径列表'),
+  target: z
+    .union([z.string(), z.array(z.string())])
+    .optional()
+    .describe('目标字段路径'),
+  when: z.string().optional().describe('条件表达式（何时应用 fulfill）'),
+  fulfill: ReactionEffect.optional().describe('条件为真时应用的效果'),
+  otherwise: ReactionEffect.optional().describe('条件为假时应用的效果'),
 })
 
 export type ReactionConfig = z.infer<typeof ReactionConfig>
 
 export const ReactionSchema = z.object({
-  /** Reaction type */
-  type: z.enum(['linkage', 'effect', 'computed']).optional(),
-  /** Field paths this reaction depends on */
-  dependencies: z.array(z.string()).optional(),
-  /** Target field(s) to affect */
-  target: z.union([z.string(), z.array(z.string())]).optional(),
-  /** Condition expression */
-  when: z.string().optional(),
-  /** Effect when condition is true */
-  fulfill: ReactionEffect.optional(),
-  /** Effect when condition is false */
-  otherwise: ReactionEffect.optional(),
-  /** Computed value expression */
-  expression: z.string().optional(),
-  /** Custom reaction executor name */
-  executor: z.string().optional(),
+  type: z.enum(['linkage', 'effect', 'computed']).optional().describe('联动类型'),
+  dependencies: z.array(z.string()).optional().describe('依赖的字段路径列表'),
+  target: z
+    .union([z.string(), z.array(z.string())])
+    .optional()
+    .describe('目标字段路径'),
+  when: z.string().optional().describe('条件表达式'),
+  fulfill: ReactionEffect.optional().describe('条件为真时应用的效果'),
+  otherwise: ReactionEffect.optional().describe('条件为假时应用的效果'),
+  expression: z.string().optional().describe('计算值表达式'),
+  executor: z.string().optional().describe('自定义联动执行器名称'),
 })
 
 export type ReactionSchema = z.infer<typeof ReactionSchema>
 
 export const ReactionContext = z.object({
-  /** Current field value */
-  $self: z.any(),
-  /** Dependency field values */
-  $deps: z.record(z.string(), z.any()),
-  /** Form instance reference */
-  $form: z.any(),
-  /** All form values */
-  $values: z.record(z.string(), z.any()),
-  /** Field path */
-  $path: z.string(),
-  /** Field schema */
+  $self: z.any().describe('当前字段值'),
+  $deps: z.record(z.string(), z.any()).describe('依赖字段值'),
+  $form: z.any().describe('表单实例引用'),
+  $values: z.record(z.string(), z.any()).describe('所有表单值'),
+  $path: z.string().describe('字段路径'),
   get $schema() {
-    return FieldSchema
+    return FieldSchema.describe('字段 schema')
   },
-  /** Field state */
   get $state() {
-    return FieldState
+    return FieldState.describe('字段状态')
   },
 })
 
