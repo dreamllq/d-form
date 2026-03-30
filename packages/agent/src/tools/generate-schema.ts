@@ -1,5 +1,5 @@
-import { type ComponentPropsRegistry, type FormSchema, assembleFormSchema } from '@d-form/shared'
-import type { z } from 'zod'
+import { type ComponentPropsRegistry, FormSchema, assembleFormSchema } from '@d-form/shared'
+import { z } from 'zod'
 import type { FormAgentBus } from '../bus'
 import type { StructuredToolDefinition } from '../types'
 
@@ -12,7 +12,6 @@ export function createGenerateSchemaTool(
   bus: FormAgentBus
 ): StructuredToolDefinition {
   const schema = assembleFormSchema(registry)
-
   return {
     name: 'generate_form_schema',
     description:
