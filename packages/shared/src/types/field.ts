@@ -26,9 +26,9 @@ export const FieldSchema = z.object({
   component: z.string().optional().describe('渲染组件名称'),
   componentProps: z.record(z.string(), z.any()).optional().describe('组件属性'),
   validation: ValidationConfig.optional().describe('验证配置'),
-  get reactions() {
-    return z.array(ReactionConfig).optional().describe('字段联动配置')
-  },
+  // get reactions() {
+  //   return z.array(ReactionConfig).optional().describe('字段联动配置')
+  // },
   visible: z.boolean().optional().describe('字段是否可见'),
   disabled: z.boolean().optional().describe('字段是否禁用'),
   placeholder: z.string().optional().describe('字段占位文本'),
@@ -39,9 +39,9 @@ export const FieldSchema = z.object({
   get properties() {
     return z.record(z.string(), FieldSchema).optional().describe('嵌套属性（对象类型）')
   },
-  get items() {
-    return FieldSchema.optional().describe('数组项 schema')
-  },
+  // get items() {
+  //   return FieldSchema.optional().describe('数组项 schema')
+  // },
 })
 
 /**
