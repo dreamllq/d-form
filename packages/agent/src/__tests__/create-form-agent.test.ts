@@ -21,14 +21,19 @@ describe('createFormAgent', () => {
     expect(agent.name).toBe('D-Form Agent')
   })
 
-  it('default config: agent.tools has exactly 1 tool', () => {
+  it('default config: agent.tools has exactly 2 tools', () => {
     const { agent } = createFormAgent()
-    expect(agent.tools).toHaveLength(1)
+    expect(agent.tools).toHaveLength(2)
   })
 
   it('default config: agent.tools[0].name is "generate_form_schema"', () => {
     const { agent } = createFormAgent()
     expect(agent.tools[0].name).toBe('generate_form_schema')
+  })
+
+  it('default config: agent.tools[1].name is "get_current_schema"', () => {
+    const { agent } = createFormAgent()
+    expect(agent.tools[1].name).toBe('get_current_schema')
   })
 
   it('default config: agent.systemPrompt is a non-empty string containing component names', () => {

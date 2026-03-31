@@ -1,6 +1,7 @@
 import { elementPlusRegistry } from '@d-form/element-plus'
 import { FormAgentBus } from './bus'
 import { createGenerateSchemaTool } from './tools/generate-schema'
+import { createGetCurrentSchemaTool } from './tools/get-current-schema'
 import { buildSystemPrompt } from './prompts'
 import type { CreateFormAgentConfig, FormAgentResult } from './types'
 
@@ -13,6 +14,7 @@ export function createFormAgent(config: CreateFormAgentConfig = {}): FormAgentRe
   const registry = config.registry ?? elementPlusRegistry
   const bus = new FormAgentBus()
   const tool = createGenerateSchemaTool(registry, bus)
+  const getCurrentSchemaTool = createGetCurrentSchemaTool(bus)
   const systemPrompt = buildSystemPrompt(registry, config.systemPrompt)
 
   return {
@@ -21,7 +23,7 @@ export function createFormAgent(config: CreateFormAgentConfig = {}): FormAgentRe
       name: config.name ?? 'D-Form Agent',
       description: config.description ?? 'AI agent for generating form schemas',
       systemPrompt,
-      tools: [tool],
+      tools: [tool, getCurrentSchemaTool],
     },
     bus,
   }
