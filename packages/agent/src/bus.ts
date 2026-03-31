@@ -9,6 +9,18 @@ interface BusEvents {
 
 export class FormAgentBus {
   private listeners = new Map<string, Set<Listener<unknown>>>()
+  private currentSchema: z.infer<typeof FormSchema> | null = null
+
+  getCurrentSchema(): z.infer<typeof FormSchema> | null {
+    return this.currentSchema
+  }
+
+  setCurrentSchema(schema: z.infer<typeof FormSchema>): void {
+    if (JSON.stringify(this.currentSchema) === JSON.stringify(schema)) {
+      return
+    }
+    this.currentSchema = schema
+  }
 
   on<K extends keyof BusEvents>(event: K, listener: Listener<BusEvents[K]>): () => void {
     if (!this.listeners.has(event)) {

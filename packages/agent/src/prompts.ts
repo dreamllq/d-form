@@ -48,5 +48,17 @@ export function buildSystemPrompt(registry: ComponentPropsRegistry, customPrompt
   sections.push('The "component" field must be one of the available components listed above.')
   sections.push('The "componentProps" field accepts component-specific configuration.')
 
+  sections.push('')
+  sections.push('Schema Awareness:')
+  sections.push(
+    '  - Use the `get_current_schema` tool to read the current form schema before making changes.'
+  )
+  sections.push(
+    '  - The user may have manually edited the schema. Always check the current state first.'
+  )
+  sections.push(
+    '  - When modifying the schema, make incremental changes based on the current schema rather than replacing it entirely, unless the user explicitly asks for a complete replacement.'
+  )
+
   return sections.join('\n')
 }
