@@ -7,7 +7,7 @@
  */
 
 import { z } from 'zod'
-import { FieldSchema } from './field'
+import { BaseFieldSchema } from './field'
 import type { FieldSchema as FieldSchemaType } from './field'
 import { FormSchema } from './form'
 
@@ -143,9 +143,7 @@ export function defineFormSchema<R extends ComponentPropsRegistry>(
  * ```
  */
 export function assembleFormSchema(registry: ComponentPropsRegistry) {
-  // Strip component/componentProps from the base FieldSchema — we'll add them
-  // back via discriminated union with per-component typing.
-  const baseShape = FieldSchema.omit({ component: true, componentProps: true })
+  const baseShape = BaseFieldSchema.omit({ component: true, componentProps: true })
 
   const entries = Object.entries(registry)
 

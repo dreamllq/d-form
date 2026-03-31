@@ -13,11 +13,15 @@ export const FieldType = z
 export type FieldType = z.infer<typeof FieldType>
 
 /**
- * Field schema — recursive via getter pattern (Zod v4).
- * `properties` and `items` reference FieldSchema itself;
- * `reactions` references ReactionConfig from ./reaction (circular module dep, safe via ESM live bindings).
+ * BaseFieldSchema — all field properties except `reactions`.
+ *
+ * Breaking the type recursion cycle:
+ *   FieldSchema → ReactionConfig → ReactionEffect.schema → FieldSchema
+ * By extracting a base without `reactions`, ReactionEffect.schema can reference
+ * BaseFieldSchema instead, cutting the cycle at a semantically correct point:
+ * a reaction effect should not inject new reactions into target fields.
  */
-export const FieldSchema = z.object({
+export const BaseFieldSchema = z.object({
   type: z.string().describe('字段类型'),
   key: z.string().optional().describe('字段键名/路径'),
   title: z.string().optional().describe('字段标签/标题'),
@@ -26,9 +30,6 @@ export const FieldSchema = z.object({
   component: z.string().optional().describe('渲染组件名称'),
   componentProps: z.record(z.string(), z.any()).optional().describe('组件属性'),
   validation: ValidationConfig.optional().describe('验证配置'),
-  // get reactions() {
-  //   return z.array(ReactionConfig).optional().describe('字段联动配置')
-  // },
   visible: z.boolean().optional().describe('字段是否可见'),
   disabled: z.boolean().optional().describe('字段是否禁用'),
   placeholder: z.string().optional().describe('字段占位文本'),
@@ -39,15 +40,23 @@ export const FieldSchema = z.object({
   get properties() {
     return z.record(z.string(), FieldSchema).optional().describe('嵌套属性（对象类型）')
   },
-  // get items() {
-  //   return FieldSchema.optional().describe('数组项 schema')
-  // },
 })
 
 /**
- * FieldSchema type — preserves the original generic for backward compatibility.
- * The generic T only affects the `default` field.
+ * FieldSchema — extends BaseFieldSchema with `reactions`.
+ * Recursive via getter pattern (Zod v4): `properties` references FieldSchema itself;
+ * `reactions` references ReactionConfig from ./reaction (circular module dep, safe via ESM live bindings).
  */
+export const FieldSchema = BaseFieldSchema.extend({
+  get reactions() {
+    return z.array(ReactionConfig).optional().describe('字段联动配置')
+  },
+})
+
+export type BaseFieldSchema<T = any> = Omit<z.infer<typeof BaseFieldSchema>, 'default'> & {
+  default?: T
+}
+
 export type FieldSchema<T = any> = Omit<z.infer<typeof FieldSchema>, 'default'> & { default?: T }
 
 export const FieldState = z.object({

@@ -4,14 +4,17 @@
  */
 
 import { z } from 'zod'
-import { FieldSchema, FieldState } from './field'
+import { BaseFieldSchema, FieldSchema, FieldState } from './field'
 
 export const ReactionEffect = z.object({
   get state() {
     return FieldState.partial().optional().describe('要应用的状态变更')
   },
+  // BaseFieldSchema (without `reactions`) breaks the type recursion:
+  //   FieldSchema → ReactionConfig → ReactionEffect.schema → ✗ FieldSchema
+  //   FieldSchema → ReactionConfig → ReactionEffect.schema → BaseFieldSchema (no cycle)
   get schema() {
-    return FieldSchema.partial().optional().describe('要应用的 schema 变更')
+    return BaseFieldSchema.partial().optional().describe('要应用的 schema 变更')
   },
   run: z.string().optional().describe('自定义执行动作（表达式字符串）'),
 })
