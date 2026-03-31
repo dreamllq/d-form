@@ -47,15 +47,19 @@ export class Reaction {
       }
     }
 
-    const source = this.form.getField(this.sourceField)
-    if (source) {
-      const unsub = source.on('valueChange', () => this.run())
-      this.unsubscribers.push(unsub)
+    const targets = this.getTargets()
+    const selfIsTarget = targets.includes(this.sourceField)
+    const hasWhen = this.config.when !== undefined
+
+    if (!selfIsTarget || hasWhen) {
+      const source = this.form.getField(this.sourceField)
+      if (source) {
+        const unsub = source.on('valueChange', () => this.run())
+        this.unsubscribers.push(unsub)
+      }
     }
 
-    // Run initial reaction when there's conditional logic (when + otherwise/fulfill)
-    // This ensures initial state is applied based on current field values
-    if (this.config.when !== undefined) {
+    if (hasWhen) {
       this.run()
     }
   }
