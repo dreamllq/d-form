@@ -31,6 +31,7 @@ export function createGenerateSchemaTool(
       const fieldNames = Object.keys(data.properties || {})
       const fieldCount = fieldNames.length
 
+      bus.setCurrentSchema(result.data as z.infer<typeof FormSchema>)
       bus.emit('schema:change', result.data as z.infer<typeof FormSchema>)
 
       if (fieldCount === 0) {
