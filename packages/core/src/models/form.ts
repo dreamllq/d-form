@@ -91,8 +91,9 @@ export class Form {
 
     // Field-level reactions
     for (const [key, fieldSchema] of Object.entries(schema.properties)) {
-      if (fieldSchema.reactions?.length) {
-        for (const reactionConfig of fieldSchema.reactions) {
+      const reactions = fieldSchema.reactions as ReactionConfig[] | undefined
+      if (reactions?.length) {
+        for (const reactionConfig of reactions) {
           const reaction = this._createReactionFromConfig(key, reactionConfig)
           if (reaction) {
             this._reactions.push(reaction)
